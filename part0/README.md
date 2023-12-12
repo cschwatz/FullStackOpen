@@ -1,5 +1,5 @@
 <!-- Exercise 0.4 - New note diagram -->
-
+```mermaid
 sequenceDiagram
     participant browser
     participant server
@@ -28,9 +28,10 @@ sequenceDiagram
     activate server
     server-->>browser: data.json - all JSON data (every note)
     deactivate server
+```
 
 <!-- Exercise 0.5 - Single page app Diagram -->
-
+```mermaid
 sequenceDiagram
     participant browser
     participant server
@@ -54,9 +55,10 @@ sequenceDiagram
     activate server
     server-->>browser: JSON data - [{content:"..." date:"..."}]
     deactivate server
+```
 
 <!-- Exercise 0.6 - Single page Diagram -->
-
+```mermaid
 sequenceDiagram
     participant browser
     participant server
@@ -65,3 +67,4 @@ sequenceDiagram
     activate server
     server-->>browser: Status code 201 - Created
     deactivate server
+```
