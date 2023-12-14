@@ -22,6 +22,40 @@ const Display = ({ counter, text }) => {
   )
 }
 
+const Statistics = ({ history, text }) => {
+  if (text === 'average') {
+    let avg = 0
+    let total = 0
+    history.forEach(num => {
+      avg += num
+      total++
+    })
+    return (
+      <Display counter={(total > 0 ? avg / total : 0)} text={text} />
+    )
+  }
+  if (text === 'all') {
+    let sum = 0
+    history.forEach(num => sum += 1)
+    return (
+      <Display counter={sum} text={text} />
+    )
+  }
+  if (text === 'positive') {
+    let totalPositives = 0
+    let total = 0
+    history.forEach(num => {
+      if (num > 0) {
+        totalPositives++
+      }
+      total++
+    })
+    return (
+      <Display counter={(total > 0 ? (totalPositives / total) * 100 : 0)} text={text} />
+    )
+  }
+}
+
 const App = () => {
   // save clicks of each button to its own state
   const [good, setGood] = useState(0)
@@ -41,28 +75,6 @@ const App = () => {
     setBad(bad + 1)
     setHistory(history.concat(-1))
   }
-  const historySum = () => {
-    let sum = 0
-    history.forEach(num => sum += 1)
-    return sum
-  }
-  const historyAvg = () => {
-    let avg = 0
-    let total = historySum()
-    history.forEach(num => avg += num)
-    return (total > 0 ? avg / total : 0)
-  }
-  const historyPositive = () => {
-    let totalPositives = 0
-    let total = 0
-    history.forEach(num => {
-      if (num > 0) {
-        totalPositives++
-      }
-      total++
-    })
-    return (total > 0 ? (totalPositives / total) * 100 : 0)
-  }
 
   return (
     <div>
@@ -74,9 +86,12 @@ const App = () => {
       <Display counter={good} text={'good'} />
       <Display counter={neutral} text={'neutral'} />
       <Display counter={bad} text={'bad'} />
-      <Display counter={historySum()} text={'all'} />
+      {/* <Display counter={historySum()} text={'all'} />
       <Display counter={historyAvg()} text={'average'} />
-      <Display counter={historyPositive()} text={'positive'} />
+      <Display counter={historyPositive()} text={'positive'} /> */}
+      <Statistics history={history} text={'all'} />
+      <Statistics history={history} text={'average'} />
+      <Statistics history={history} text={'positive'} />
     </div>
   )
 }
