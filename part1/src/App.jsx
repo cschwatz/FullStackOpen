@@ -22,38 +22,28 @@ const Display = ({ counter, text }) => {
   )
 }
 
-const Statistics = ({ history, text }) => {
-  if (text === 'average') {
+const Statistics = ({ history }) => {
+  if (history.length === 0) {
+    return <p>No feedback given</p>
+  } else {
+    // all
+    let total = 0
+    history.forEach(num => total++)
+    //average
     let avg = 0
-    let total = 0
-    history.forEach(num => {
-      avg += num
-      total++
-    })
-    return (
-      <Display counter={(total > 0 ? avg / total : 0)} text={text} />
-    )
-  }
-  if (text === 'all') {
-    let sum = 0
-    history.forEach(num => sum += 1)
-    return (
-      <Display counter={sum} text={text} />
-    )
-  }
-  if (text === 'positive') {
+    history.forEach(num => avg += num)
+    // positive
     let totalPositives = 0
-    let total = 0
-    history.forEach(num => {
-      if (num > 0) {
-        totalPositives++
-      }
-      total++
-    })
+    history.filter(num => num > 0).forEach(filteredNum => totalPositives++)
     return (
-      <Display counter={(total > 0 ? (totalPositives / total) * 100 : 0)} text={text} />
+      <div>
+        <Display counter={total} text={'all'} />
+        <Display counter={(total > 0 ? (avg / total) : 0)} text={'average'} />
+        <Display counter={(total > 0 ? (totalPositives / total) * 100 : 0)} text={'positive'} />
+      </div>
     )
   }
+  
 }
 
 const App = () => {
@@ -86,12 +76,7 @@ const App = () => {
       <Display counter={good} text={'good'} />
       <Display counter={neutral} text={'neutral'} />
       <Display counter={bad} text={'bad'} />
-      {/* <Display counter={historySum()} text={'all'} />
-      <Display counter={historyAvg()} text={'average'} />
-      <Display counter={historyPositive()} text={'positive'} /> */}
-      <Statistics history={history} text={'all'} />
-      <Statistics history={history} text={'average'} />
-      <Statistics history={history} text={'positive'} />
+      <Statistics history={history} />
     </div>
   )
 }
