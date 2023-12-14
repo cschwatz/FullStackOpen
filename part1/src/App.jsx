@@ -1,61 +1,47 @@
-//header -> name of the course
-//Content -> render parts and number of exercises
-//total -> render total number of exercices
+import { useState } from 'react'
 
-import { Component } from "react";
-
-const Header = (props) => {
+const Banner = ({ message }) => {
   return (
-    <h1>{props.name}</h1>
-  );
+    <h1>{message}</h1>
+  )
+} 
+
+const Button = ({ onClick, text }) => {
+  return (
+    <button onClick={onClick}>
+      {text}
+    </button>
+  )
 }
 
-const Content = (props) => {
-  return (
-    <>
-      <p>
-        {props.part[0].name} {props.part[0].exercises}
-      </p>
-      <p>
-        {props.part[1].name} {props.part[1].exercises}
-      </p>
-      <p>
-        {props.part[2].name} {props.part[2].exercises}
-      </p>
-    </>  
-  );
-}
-
-const Total = (props) => {
+const Display = ({ counter, text }) => {
   return (
     <p>
-      {props.part[0].exercises + props.part[1].exercises + props.part[2].exercises}
+     {text} {counter}
     </p>
-  );
+  )
 }
 
 const App = () => {
-  const course = 'Half Stack application development'
-  const parts = [
-    {
-      name: 'Fundamentals of React',
-      exercises: 10
-    },
-    {
-      name: 'Using props to pass data',
-      exercises: 7
-    },
-    {
-      name: 'State of a component',
-      exercises: 14
-    }
-  ]
+  // save clicks of each button to its own state
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+
+  const handleGoodClick = () => setGood(good + 1)
+  const handleNeutralClick = () => setNeutral(neutral + 1) 
+  const handleBadClick = () => setBad(bad + 1)
 
   return (
     <div>
-      <Header name={course} />
-      <Content part={parts} />
-      <Total part={parts} />
+      <Banner message={'give feedback'} />
+      <Button onClick={handleGoodClick} text={'good'} />
+      <Button onClick={handleNeutralClick} text={'neutral'} />
+      <Button onClick={handleBadClick} text={'bad'} />
+      <Banner message={'statistics'} />
+      <Display counter={good} text={'good'} />
+      <Display counter={neutral} text={'neutral'} />
+      <Display counter={bad} text={'bad'} />
     </div>
   )
 }
