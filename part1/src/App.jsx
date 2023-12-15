@@ -1,10 +1,34 @@
 import { useState } from 'react'
 
+const Banner = ({ text }) => {
+  return (
+    <h1>
+      {text}
+    </h1>
+  )
+}
+
 const NextButton = ({ text, onClick }) => {
   return (
     <button onClick={onClick}>
       {text}
     </button>
+  )
+}
+
+const DisplayHighestVoted = ({ anecdotes, points }) => {
+  let highest = 0
+  points.forEach(num => (num > highest ? highest = num : highest = highest))
+  let highestIndex = points.indexOf(highest)
+  return (
+    <div>
+      <p>
+        {anecdotes[highestIndex]}
+      </p>
+      <p>
+        has {highest} votes
+      </p>
+    </div>
   )
 }
 
@@ -33,12 +57,15 @@ const App = () => {
   }
   return (
     <div>
+      <Banner text={'Anecdote of the day'} />
       <p>
       {anecdotes[selected]}
       </p>
       <p>has {points[selected]} votes</p>
       <NextButton text={'vote'} onClick={handleVote} />
       <NextButton text={'next anecdote'} onClick={handleNext} />
+      <Banner text={'Anecdote with most votes'} />
+      <DisplayHighestVoted anecdotes={anecdotes} points={points} />
     </div>
   )
 }
