@@ -22,28 +22,72 @@ const Display = ({ counter, text }) => {
   )
 }
 
-const Statistics = ({ history }) => {
+const StatsTable = ({ goodValue, neutralValue, badValue, history }) => {
   if (history.length === 0) {
     return <p>No feedback given</p>
   } else {
-    // all
     let total = 0
-    history.forEach(num => total++)
-    //average
     let avg = 0
-    history.forEach(num => avg += num)
-    // positive
-    let totalPositives = 0
-    history.filter(num => num > 0).forEach(filteredNum => totalPositives++)
+    let positives = 0
+    history.forEach(num => {
+      if (num > 0) {
+        positives++
+      }
+      total++
+      avg += num
+    })
+    let avgTotal = (total > 0 ? (avg / total) : 0)
+    let totalPositives = (total > 0 ? (positives / total) * 100 : 0)
     return (
-      <div>
-        <Display counter={total} text={'all'} />
-        <Display counter={(total > 0 ? (avg / total) : 0)} text={'average'} />
-        <Display counter={(total > 0 ? (totalPositives / total) * 100 : 0)} text={'positive'} />
-      </div>
+      <Table 
+        good={goodValue} 
+        neutral={neutralValue} 
+        bad={badValue} 
+        all={total} 
+        average={avgTotal} 
+        positive={totalPositives} 
+      />
     )
   }
-  
+}
+
+const Table = ({ good, neutral, bad, all, average, positive}) => {
+  return (
+    <table>
+        <tbody>
+          <tr>
+            <td>
+              <Display counter={good} text={'good'} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <Display counter={neutral} text={'neutral'} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <Display counter={bad} text={'bad'} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <Display counter={all} text={'all'} />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <Display counter={average} text={'average'} />
+            </td>
+          </tr> 
+          <tr>
+            <td>
+              <Display counter={positive} text={'positive'} />
+            </td>
+          </tr> 
+        </tbody>
+      </table>
+  )
 }
 
 const App = () => {
@@ -73,10 +117,12 @@ const App = () => {
       <Button onClick={handleNeutralClick} text={'neutral'} />
       <Button onClick={handleBadClick} text={'bad'} />
       <Banner message={'statistics'} />
-      <Display counter={good} text={'good'} />
-      <Display counter={neutral} text={'neutral'} />
-      <Display counter={bad} text={'bad'} />
-      <Statistics history={history} />
+      <StatsTable 
+        goodValue={good}
+        neutralValue={neutral}
+        badValue={bad}
+        history={history}
+      />
     </div>
   )
 }
