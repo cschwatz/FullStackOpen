@@ -33,7 +33,6 @@ const PhoneBookForm = ({ addPerson, name, handleName, number, handleNumber }) =>
   );
 };
 
-
 const Numbers = ({list}) => {
   return (
     <div>
@@ -55,14 +54,18 @@ const App = () => {
 
   const addNumber = (event) => {
     event.preventDefault()
+    const personObject = {
+      name: newName,
+      number: newNumber,
+    }
+    // check if new person obj is in book - if not -> post request with new obj
     persons.filter(person => person.name === newName).length === 0 ?
-    setPersons(persons.concat(
-      {
-        name: newName,
-        number: newNumber,
-        id: (persons.length + 1)
-      }
-    )) : alert(`${newName} is already added to phonebook`)
+    axios
+    .post('http://localhost:3001/persons', personObject)
+    .then(response => {
+      setPersons(persons.concat(response.data))
+    })
+    : alert(`${newName} is already added to phonebook`)
     setNewName('')
     setNewNumber('')
   }
