@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 
 const SearchPerson = ({handleFilter}) => {
   return (
@@ -60,10 +60,10 @@ const App = () => {
     }
     // check if new person obj is in book - if not -> post request with new obj
     persons.filter(person => person.name === newName).length === 0 ?
-    axios
-    .post('http://localhost:3001/persons', personObject)
-    .then(response => {
-      setPersons(persons.concat(response.data))
+    personService
+    .create(personObject)
+    .then(returnedPerson => {
+      setPersons(persons.concat(returnedPerson))
     })
     : alert(`${newName} is already added to phonebook`)
     setNewName('')
@@ -90,10 +90,10 @@ const App = () => {
 
   // Effect hook to fetch data at first render of the App (fetches only once)
   useEffect(() => {
-    axios
-    .get('http://localhost:3001/persons')
-    .then(response => {
-      setPersons(response.data)
+    personService
+    .getAll('http://localhost:3001/persons')
+    .then(curretPersons => {
+      setPersons(curretPersons)
     })
   }, [])
 
