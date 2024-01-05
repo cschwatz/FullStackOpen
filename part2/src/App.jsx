@@ -5,7 +5,7 @@ const Numbers = ({list}) => {
     <div>
       {list.map(person => (
         <p>
-          {person.name}
+          {person.name} {person.number}
         </p>
       ))}
     </div>
@@ -13,24 +13,28 @@ const Numbers = ({list}) => {
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
-  ]) 
+  const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
 
   const addNumber = (event) => {
     event.preventDefault()
     persons.filter(person => person.name === newName).length === 0 ?
     setPersons(persons.concat(
       {
-        name: newName
+        name: newName,
+        number: newNumber
       }
     )) : alert(`${newName} is already added to phonebook`)
     setNewName('')
+    setNewNumber('')
   }
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
+  }
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value)
   }
 
   return (
@@ -41,6 +45,12 @@ const App = () => {
           name: <input 
           value={newName}
           onChange={handleNameChange}
+          />
+        </div>
+        <div>
+          number: <input 
+          value={newNumber}
+          onChange={handleNumberChange}
           />
         </div>
         <div>
