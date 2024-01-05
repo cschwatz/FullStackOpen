@@ -1,5 +1,38 @@
 import { useState } from 'react'
 
+const SearchPerson = ({handleFilter}) => {
+  return (
+    <div>
+      filter shown with <input 
+      onChange={handleFilter} 
+      />
+    </div>
+  )
+}
+
+const PhoneBookForm = ({ addPerson, name, handleName, number, handleNumber }) => {
+  return (
+    <form onSubmit={addPerson}>
+      <div>
+        name: <input 
+        value={name}
+        onChange={handleName}
+        />
+      </div>
+      <div>
+        number: <input 
+        value={number}
+        onChange={handleNumber}
+        />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  );
+};
+
+
 const Numbers = ({list}) => {
   return (
     <div>
@@ -54,29 +87,17 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with <input 
-        onChange={handleFilterChange} 
-        />
-      </div>
+      <SearchPerson 
+      handleFilter={handleFilterChange} 
+      />
       <h2>Add a new</h2>
-      <form onSubmit={addNumber}>
-        <div>
-          name: <input 
-          value={newName}
-          onChange={handleNameChange}
-          />
-        </div>
-        <div>
-          number: <input 
-          value={newNumber}
-          onChange={handleNumberChange}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PhoneBookForm 
+      name={newName} 
+      number={newNumber} 
+      handleName={handleNameChange} 
+      handleNumber={handleNumberChange} 
+      addPerson={addNumber}
+      />
       <h2>Numbers</h2>
       <Numbers list={personsToShow} />
     </div>
