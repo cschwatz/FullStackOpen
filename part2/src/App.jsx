@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
 
+const DeleteButton = ({handleDelete, id }) => {
+  return (
+    <button onClick={() => handleDelete(id)}>
+      Delete
+    </button>
+  )
+}
+
 const SearchPerson = ({handleFilter}) => {
   return (
     <div>
@@ -33,12 +41,12 @@ const PhoneBookForm = ({ addPerson, name, handleName, number, handleNumber }) =>
   );
 };
 
-const Numbers = ({list}) => {
+const Numbers = ({list, handleDelete}) => {
   return (
     <div>
       {list.map(person => (
         <p key={person.id}>
-          {person.name} {person.number}
+          {person.name} {person.number} <DeleteButton handleDelete={handleDelete} id={person.id} />
         </p>
       ))}
     </div>
@@ -88,6 +96,19 @@ const App = () => {
     }
   }
 
+  const handleUpdate = (id, number) => {
+
+  }
+
+  const handleDelete = (id) => {
+    if (window.confirm('Do you really want to delete this person?')) {
+      personService
+      .remove(id)
+      .then(setPersons(persons.filter(person => person.id !== id)))
+    }
+    
+  }
+
   // Effect hook to fetch data at first render of the App (fetches only once)
   useEffect(() => {
     personService
@@ -112,7 +133,7 @@ const App = () => {
       addPerson={addNumber}
       />
       <h2>Numbers</h2>
-      <Numbers list={personsToShow} />
+      <Numbers list={personsToShow} handleDelete={handleDelete} />
     </div>
   )
 }
