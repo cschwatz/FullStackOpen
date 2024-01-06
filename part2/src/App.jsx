@@ -53,12 +53,35 @@ const Numbers = ({list, handleDelete}) => {
   )
 }
 
+const Notification = ({message}) => {
+  if (message === null) {
+    return null
+  } 
+
+  const notificationStyle = {
+    color: 'green',
+    background: 'lightgrey',
+    borderStyle: message ? 'solid' : 'none',
+    borderRadius: 5,
+    padding: message ? 10 : 0,
+    fontSize: 20,
+  }
+
+  return (
+    <div style={notificationStyle}>
+      {message}
+    </div>
+  )
+  
+}
+
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
   const [showAll, setShowAll] = useState(true)
+  const [newNotification, setNotification] = useState('')
 
   const addNumber = (event) => {
     event.preventDefault()
@@ -74,9 +97,13 @@ const App = () => {
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
         })
+      changeNotification(`${personObject.name} was added to the phonebook`)
+      setTimeout(() => changeNotification(null), 5000)
     } else {
       const changedPerson = {...existingPerson, number: newNumber}
       handleUpdate(existingPerson.id, changedPerson)
+      changeNotification(`${personObject.name}'s number was updated`)
+      setTimeout(() => changeNotification(null), 5000)
     }
     setNewName('')
     setNewNumber('')
@@ -113,12 +140,19 @@ const App = () => {
   }
 
   const handleDelete = (id) => {
+    const toDelete = persons.find(person => person.id === id)
     if (window.confirm('Do you really want to delete this person?')) {
       personService
       .remove(id)
       .then(setPersons(persons.filter(person => person.id !== id)))
+      changeNotification(`${toDelete.name} was removed from the phonebook`)
+      setTimeout(() => changeNotification(null), 5000)
     }
     
+  }
+
+  const changeNotification = (message) => {
+    setNotification(message)
   }
 
   // Effect hook to fetch data at first render of the App (fetches only once)
@@ -132,6 +166,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={newNotification} />
       <h2>Phonebook</h2>
       <SearchPerson 
       handleFilter={handleFilterChange} 
