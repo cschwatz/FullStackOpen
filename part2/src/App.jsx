@@ -1,193 +1,84 @@
 import { useState, useEffect } from 'react'
-import personService from './services/persons'
+import countryService from './services/countries'
 
-const DeleteButton = ({handleDelete, id }) => {
-  return (
-    <button onClick={() => handleDelete(id)}>
-      Delete
-    </button>
-  )
-}
-
-const SearchPerson = ({handleFilter}) => {
+const FilterCountry = ({handleFilter}) => {
   return (
     <div>
-      filter shown with <input 
-      onChange={handleFilter} 
+      find countries<input
+        onChange={handleFilter}
       />
     </div>
   )
 }
 
-const PhoneBookForm = ({ addPerson, name, handleName, number, handleNumber }) => {
-  return (
-    <form onSubmit={addPerson}>
+const ListCountries = ({countryList, filter}) => {
+  const filteredCountries = countryList.filter(country => country.name.common.includes(filter))
+  console.log(filteredCountries)
+  if (filteredCountries.length > 10) {
+    return (
       <div>
-        name: <input 
-        value={name}
-        onChange={handleName}
-        />
-      </div>
-      <div>
-        number: <input 
-        value={number}
-        onChange={handleNumber}
-        />
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  );
-};
-
-const Numbers = ({list, handleDelete}) => {
-  return (
-    <div>
-      {list.map(person => (
-        <p key={person.id}>
-          {person.name} {person.number} <DeleteButton handleDelete={handleDelete} id={person.id} />
+        <p>
+          Too many matches, specify another filter
         </p>
-      ))}
-    </div>
-  )
-}
-
-const Notification = ({message, type}) => {
-  if (message === null) {
-    return null
-  } 
-
-  const notificationStyle = {
-    color: type === 'success' ? 'green' : 'red',
-    background: 'lightgrey',
-    borderStyle: message ? 'solid' : 'none',
-    borderRadius: 5,
-    padding: message ? 10 : 0,
-    fontSize: 20,
+      </div>
+    )
+  } else if (filteredCountries.length > 1 && filteredCountries.length < 10) {
+    return (
+      <div>
+        {filteredCountries.map(country => (
+          <p key={country.id}>
+            {country.name.common}
+          </p>
+        ))}
+      </div>
+    )
+  } else if (filteredCountries.length === 1) {
+    return (
+      <div>
+        <h3>{filteredCountries[0].name.common} {filteredCountries[0].flag}</h3>
+        <p>Capital: {filteredCountries[0].capital}</p>
+        <p>Area: {filteredCountries[0].area} km^2</p>
+        <p>Languages:</p>
+        <ul>
+          {Object.values(filteredCountries[0].languages).map(language => (
+            <li>
+              {language}
+            </li>
+          ))}
+        </ul>
+        <p>Flag:</p>
+        <img src={filteredCountries[0].flags.png}/>
+      </div>
+    )
   }
-
-  return (
-    <div style={notificationStyle}>
-      {message}
-    </div>
-  )
   
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([]) 
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-  const [newFilter, setNewFilter] = useState('')
-  const [showAll, setShowAll] = useState(true)
-  const [newNotification, setNotification] = useState('')
-  const [notificationType, setNotificationType] = useState('sucess')
+  const [countries, setCountries] = useState([])
+  const [newFilter, setFilter] = useState('')
 
-  const addNumber = (event) => {
-    event.preventDefault()
-    const personObject = {
-      name: newName,
-      number: newNumber,
-    }
-
-    const existingPerson = persons.find(person => person.name === newName)
-    if (!existingPerson) {
-      personService
-        .create(personObject)
-        .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
-        })
-      changeNotification(`${personObject.name} was added to the phonebook`, 'success')
-      setTimeout(() => changeNotification(null), 5000)
-    } else {
-      const changedPerson = {...existingPerson, number: newNumber}
-      handleUpdate(existingPerson.id, changedPerson)
-      changeNotification(`${personObject.name}'s number was updated`, 'success')
-      setTimeout(() => changeNotification(null), 5000)
-    }
-    setNewName('')
-    setNewNumber('')
-  }
-
-  const personsToShow = showAll 
-    ? persons
-    : persons.filter(person => person.name.includes(newFilter))
-
-  const handleNameChange = (event) => {
-    setNewName(event.target.value)
-  }
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value)
-  }
   const handleFilterChange = (event) => {
-    setNewFilter(event.target.value)
-    if (event.target.value === '') {
-      setShowAll(true)
-    } else {
-      setShowAll(false)
-    }
+    console.log(event.target.value)
+    setFilter(event.target.value)
   }
 
-  const handleUpdate = (id, updatedPerson) => {
-    if (window.confirm(`${updatedPerson.name} is already added to Phonebook,replace the old number with a new one?`)) {
-      personService
-      .update(id, updatedPerson)
-      .then(returnedPerson => {
-        setPersons(persons.map(person => (person.id !== id ? person : returnedPerson)))
-      })
-      .catch(() => {
-        changeNotification(`Information of ${updatedPerson.name} has already been removed from servers`, 'unsuccess')      
-      })
-    }
-  }
-
-  const handleDelete = (id) => {
-    const toDelete = persons.find(person => person.id === id)
-    if (window.confirm('Do you really want to delete this person?')) {
-      personService
-      .remove(id)
-      .then(setPersons(persons.filter(person => person.id !== id)))
-      changeNotification(`${toDelete.name} was removed from the phonebook`, 'success')
-      setTimeout(() => changeNotification(null), 5000)
-    }
-    
-  }
-
-  const changeNotification = (message, type) => {
-    setNotification(message)
-    setNotificationType(type)
-  }
-
-  // Effect hook to fetch data at first render of the App (fetches only once)
   useEffect(() => {
-    personService
-    .getAll('http://localhost:3001/persons')
-    .then(curretPersons => {
-      setPersons(curretPersons)
+    console.log('fetching all data from api, this may take a few seconds')
+    countryService
+    .getAll()
+    .then(returnedObj => {
+      setCountries(returnedObj)
+      // alert('Countries data has been loaded!')
     })
   }, [])
 
-  return (
+  return(
     <div>
-      <Notification 
-      message={newNotification} 
-      type={notificationType} 
+      <FilterCountry
+        handleFilter={handleFilterChange}
       />
-      <h2>Phonebook</h2>
-      <SearchPerson 
-      handleFilter={handleFilterChange} 
-      />
-      <h2>Add a new</h2>
-      <PhoneBookForm 
-      name={newName} 
-      number={newNumber} 
-      handleName={handleNameChange} 
-      handleNumber={handleNumberChange} 
-      addPerson={addNumber}
-      />
-      <h2>Numbers</h2>
-      <Numbers list={personsToShow} handleDelete={handleDelete} />
+      <ListCountries countryList={countries} filter={newFilter}/>
     </div>
   )
 }
