@@ -53,13 +53,13 @@ const Numbers = ({list, handleDelete}) => {
   )
 }
 
-const Notification = ({message}) => {
+const Notification = ({message, type}) => {
   if (message === null) {
     return null
   } 
 
   const notificationStyle = {
-    color: 'green',
+    color: type === 'success' ? 'green' : 'red',
     background: 'lightgrey',
     borderStyle: message ? 'solid' : 'none',
     borderRadius: 5,
@@ -82,6 +82,7 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [newNotification, setNotification] = useState('')
+  const [notificationType, setNotificationType] = useState('sucess')
 
   const addNumber = (event) => {
     event.preventDefault()
@@ -97,12 +98,12 @@ const App = () => {
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
         })
-      changeNotification(`${personObject.name} was added to the phonebook`)
+      changeNotification(`${personObject.name} was added to the phonebook`, 'success')
       setTimeout(() => changeNotification(null), 5000)
     } else {
       const changedPerson = {...existingPerson, number: newNumber}
       handleUpdate(existingPerson.id, changedPerson)
-      changeNotification(`${personObject.name}'s number was updated`)
+      changeNotification(`${personObject.name}'s number was updated`, 'success')
       setTimeout(() => changeNotification(null), 5000)
     }
     setNewName('')
@@ -135,7 +136,9 @@ const App = () => {
       .then(returnedPerson => {
         setPersons(persons.map(person => (person.id !== id ? person : returnedPerson)))
       })
-      .catch(error => alert(console.error('Error updating person: ', error)))
+      .catch(() => {
+        changeNotification(`Information of ${updatedPerson.name} has already been removed from servers`, 'unsuccess')      
+      })
     }
   }
 
@@ -145,14 +148,15 @@ const App = () => {
       personService
       .remove(id)
       .then(setPersons(persons.filter(person => person.id !== id)))
-      changeNotification(`${toDelete.name} was removed from the phonebook`)
+      changeNotification(`${toDelete.name} was removed from the phonebook`, 'success')
       setTimeout(() => changeNotification(null), 5000)
     }
     
   }
 
-  const changeNotification = (message) => {
+  const changeNotification = (message, type) => {
     setNotification(message)
+    setNotificationType(type)
   }
 
   // Effect hook to fetch data at first render of the App (fetches only once)
@@ -166,7 +170,10 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={newNotification} />
+      <Notification 
+      message={newNotification} 
+      type={notificationType} 
+      />
       <h2>Phonebook</h2>
       <SearchPerson 
       handleFilter={handleFilterChange} 
