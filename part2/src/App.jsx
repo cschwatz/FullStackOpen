@@ -66,17 +66,22 @@ const App = () => {
       name: newName,
       number: newNumber,
     }
-    // check if new person obj is in book - if not -> post request with new obj
-    persons.filter(person => person.name === newName).length === 0 ?
-    personService
-    .create(personObject)
-    .then(returnedPerson => {
-      setPersons(persons.concat(returnedPerson))
-    })
-    : alert(`${newName} is already added to phonebook`)
+
+    const existingPerson = persons.find(person => person.name === newName)
+    if (!existingPerson) {
+      personService
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+        })
+    } else {
+      const changedPerson = {...existingPerson, number: newNumber}
+      handleUpdate(existingPerson.id, changedPerson)
+    }
     setNewName('')
     setNewNumber('')
   }
+
   const personsToShow = showAll 
     ? persons
     : persons.filter(person => person.name.includes(newFilter))
@@ -96,8 +101,15 @@ const App = () => {
     }
   }
 
-  const handleUpdate = (id, number) => {
-
+  const handleUpdate = (id, updatedPerson) => {
+    if (window.confirm(`${updatedPerson.name} is already added to Phonebook,replace the old number with a new one?`)) {
+      personService
+      .update(id, updatedPerson)
+      .then(returnedPerson => {
+        setPersons(persons.map(person => (person.id !== id ? person : returnedPerson)))
+      })
+      .catch(error => alert(console.error('Error updating person: ', error)))
+    }
   }
 
   const handleDelete = (id) => {
