@@ -19,7 +19,7 @@ const ShowButton = ({handleShowInfo, country}) => {
   )
 }
 
-const ListCountries = ({countryList, filter, handleShowInfo, showInfo, currentCountry}) => {
+const ListCountries = ({countryList, filter, handleShowInfo, showInfo, currentCountry, currentWeather}) => {
   const filteredCountries = countryList.filter(country => country.name.common.includes(filter))
   console.log(filteredCountries)
   if (filteredCountries.length > 0) {
@@ -58,7 +58,7 @@ const ListCountries = ({countryList, filter, handleShowInfo, showInfo, currentCo
                 {country.name.common} 
                 <ShowButton handleShowInfo={handleShowInfo} country={country}/>
               </p>
-              {showInfo && (currentCountry.name.common === country.name.common) ? (
+              {showInfo && currentWeather && (currentCountry.name.common === country.name.common) ? (
                 <div>
                   {/* Render detailed information for the selected country */}
                   <h3>{country.name.common} {country.flag}</h3>
@@ -74,6 +74,10 @@ const ListCountries = ({countryList, filter, handleShowInfo, showInfo, currentCo
                   </ul>
                   <p>Flag:</p>
                   <img src={country.flags.png} alt={`${country.name.common} flag`} />
+                  <h3>Weather in {country.capital}</h3>
+                  <p>Current temperature: {currentWeather.main.feels_like} degrees Celsius</p>
+                  <img src={`https://openweathermap.org/img/wn/${currentWeather.weather[0].icon}@2x.png`}/>
+                  <p>Wind Speed: {currentWeather.wind.speed} m/s</p>
                 </div>
               ) : null}
             </div>
@@ -89,12 +93,14 @@ const App = () => {
   const [newFilter, setFilter] = useState('')
   const [showInfo, setShowInfo] = useState(false)
   const [currentCountry, setCurrentCountry] = useState(null)
+  const [currentWeather, setCurrentWeather] = useState(null)
 
   const handleFilterChange = (event) => {
     setFilter(event.target.value)
   }
 
   const handleShowInfo = (selectedCountry) => {
+    console.log(selectedCountry)
     if (selectedCountry !== currentCountry) {
       if (showInfo) {
         setCurrentCountry(selectedCountry)
@@ -107,16 +113,29 @@ const App = () => {
       setCurrentCountry(null)
     }
   }
-
+  // hook 1 -> fetch all country data and load into an array
   useEffect(() => {
     console.log('fetching all data from api, this may take a few seconds')
     countryService
     .getAll()
     .then(returnedObj => {
       setCountries(returnedObj)
-      // alert('Countries data has been loaded!')
     })
   }, [])
+
+  // hook2 -> fetch weather data from a single country when the 'show' button for that country is selected
+  useEffect(() => {
+    console.log('retrieving weather information')
+    // need this condition since currentCountry === null in first render
+    if (currentCountry) {
+      const currentCountryLat = currentCountry.latlng[0] 
+      const currentCountryLon = currentCountry.latlng[1]
+      countryService
+      .getCountryWeather(currentCountryLat, currentCountryLon)
+      .then(returnedObj => setCurrentWeather(returnedObj))
+      console.log(currentWeather)
+    }
+  }, [currentCountry])
 
   return(
     <div>
@@ -129,6 +148,7 @@ const App = () => {
       handleShowInfo={handleShowInfo}
       showInfo={showInfo}
       currentCountry={currentCountry}
+      currentWeather={currentWeather}
       />
     </div>
   )
