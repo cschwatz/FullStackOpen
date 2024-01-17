@@ -27,3 +27,25 @@ describe('existance of objects', () => {
     })
   })
 })
+
+describe('creating blog posts', () => {
+  test('new blog post is created with POST request', async () => {
+    const newBlog = {
+      title: 'This is a test',
+      author: 'Test Testingus',
+      url: 'test.com',
+      likes: 5
+    }
+    const currentBlogs = await api.get('/api/blogs')
+    const currentBlogsLen = currentBlogs.body.length
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(currentBlogsLen + 1)
+  })
+})
