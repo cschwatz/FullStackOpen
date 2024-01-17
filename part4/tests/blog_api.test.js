@@ -109,6 +109,13 @@ describe('POST request tests', () => {
 })
 
 describe('DELETE request tests', () => {
+  test('returns status 400 if id is invalid', async () => {
+    const fakeId = '123'
+    await api
+      .delete(`/api/blogs/${fakeId}`)
+      .expect(400)
+  })
+
   test('succed with status 204 if id is valid', async () => {
     const currentBlogs = await api.get('/api/blogs')
     const currentBlogsLen = currentBlogs.body.length
@@ -119,5 +126,32 @@ describe('DELETE request tests', () => {
 
     const newBlogs = await helper.blogsInDB()
     expect(newBlogs).toHaveLength(currentBlogsLen - 1)
+  })
+})
+
+describe('PUT request tests', () => {
+  test('return status 400 if id is not valid', async () => {
+    const updatedInfo = {likes: 0}
+    const fakeId = '123'
+
+    await api
+      .put(`/api/blogs/${fakeId}`)
+      .expect(400)
+  })
+
+  test('succeded with status 200', async () => {
+    const currentBlogs = await api.get('/api/blogs')
+    const blogToUpdate = currentBlogs.body[0]
+    const blogUpdatedContent = {
+      title: blogToUpdate.title,
+      author: blogToUpdate.author,
+      url: blogToUpdate.url,
+      likes: 111
+    }
+    console.log(currentBlogs)
+    await api
+      .put(`/api/blogs/${blogToUpdate.id}`)
+      .send(blogUpdatedContent)
+      .expect(200)
   })
 })
