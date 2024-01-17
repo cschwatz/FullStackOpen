@@ -107,3 +107,17 @@ describe('POST request tests', () => {
     expect(newBlogs).toHaveLength(currentBlogsLen)
   })
 })
+
+describe('DELETE request tests', () => {
+  test('succed with status 204 if id is valid', async () => {
+    const currentBlogs = await api.get('/api/blogs')
+    const currentBlogsLen = currentBlogs.body.length
+    const blogToDelete = currentBlogs.body[0]
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const newBlogs = await helper.blogsInDB()
+    expect(newBlogs).toHaveLength(currentBlogsLen - 1)
+  })
+})
