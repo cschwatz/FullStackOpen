@@ -51,6 +51,7 @@ describe('POST request tests', () => {
     const authors = response.map(r => r.author)
     expect(authors).toContain('Test Testingus')
   })
+  
   test('creating a blog with no likes defaults to 0', async () => {
     const blogWithNoLikes = {
       title: 'I was created with no likes',
@@ -68,6 +69,41 @@ describe('POST request tests', () => {
       console.log(r)
       expect(r.likes).toBeDefined()
     })
+  })
 
+  test('creating a blog with no URL results in bad request', async () => {
+    const blogMissingURL = {
+      title: 'I was created with no URL',
+      author: 'Not URLinus'
+    }
+
+    const currentBlogs = await api.get('/api/blogs')
+    const currentBlogsLen = currentBlogs.body.length
+
+    await api
+      .post('/api/blogs')
+      .send(blogMissingURL)
+      .expect(400)
+    
+    const newBlogs = await helper.blogsInDB()
+    expect(newBlogs).toHaveLength(currentBlogsLen)
+  })
+
+  test('creating a blog with no title results in bad request', async () => {
+    const blogMissingTitle = {
+      author: 'Not Titlenus',
+      url: 'no_title.com'
+    }
+
+    const currentBlogs = await api.get('/api/blogs')
+    const currentBlogsLen = currentBlogs.body.length
+
+    await api
+      .post('/api/blogs')
+      .send(blogMissingTitle)
+      .expect(400)
+
+    const newBlogs = await helper.blogsInDB()
+    expect(newBlogs).toHaveLength(currentBlogsLen)
   })
 })
