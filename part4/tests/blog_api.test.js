@@ -16,7 +16,7 @@ afterAll(async () => {
   await mongoose.connection.close()
 })
 
-describe('existance of objects', () => {
+describe('GET request tests', () => {
   test('objects contain the id property', async () => {
     await api
       .get('/api/blogs')
@@ -29,7 +29,7 @@ describe('existance of objects', () => {
   })
 })
 
-describe('creating blog posts', () => {
+describe('POST request tests', () => {
   test('new blog post is created with POST request', async () => {
     const newBlog = {
       title: 'This is a test',
@@ -50,5 +50,24 @@ describe('creating blog posts', () => {
     expect(response).toHaveLength(currentBlogsLen + 1)
     const authors = response.map(r => r.author)
     expect(authors).toContain('Test Testingus')
+  })
+  test('creating a blog with no likes defaults to 0', async () => {
+    const blogWithNoLikes = {
+      title: 'I was created with no likes',
+      author: 'Not Likingus',
+      url: 'test_no_like.com'
+    }
+    await api
+      .post('/api/blogs')
+      .send(blogWithNoLikes)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+    
+    const response = await helper.blogsInDB()
+    response.map((r) => {
+      console.log(r)
+      expect(r.likes).toBeDefined()
+    })
+
   })
 })
