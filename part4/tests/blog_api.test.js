@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
+const helper = require('../utils/list_helper')
 
 const api = supertest(app)
 
@@ -45,7 +46,9 @@ describe('creating blog posts', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
-    const response = await api.get('/api/blogs')
-    expect(response.body).toHaveLength(currentBlogsLen + 1)
+    const response = await helper.blogsInDB() // helper function returns the body of the GET request
+    expect(response).toHaveLength(currentBlogsLen + 1)
+    const authors = response.map(r => r.author)
+    expect(authors).toContain('Test Testingus')
   })
 })
