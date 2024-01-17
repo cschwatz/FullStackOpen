@@ -14,3 +14,16 @@ test('blogs are returned as json', async () => {
 afterAll(async () => {
   await mongoose.connection.close()
 })
+
+describe('existance of objects', () => {
+  test('objects contain the id property', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+    const response = await api.get('/api/blogs')
+    const contents = response.body.map((r) => {
+      expect(r.id).toBeDefined()
+    })
+  })
+})
