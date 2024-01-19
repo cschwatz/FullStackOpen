@@ -26,9 +26,10 @@ blogsRouter.post('/', async (request, response) => {
 
   if (!blog.title || !blog.url) {
     response.status(400).end()
-  } else if (!blog.likes) {
-    blog.likes = 0
   } else {
+    if (!blog.likes) {
+      blog.likes = 0
+    }
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
@@ -54,7 +55,7 @@ blogsRouter.delete('/:id', async (request, response) => {
 })
 
 blogsRouter.put('/:id', async (request, response) => {
-  const toUpdate = await Blog.find({id: request.params.id})
+  const toUpdate = await Blog.findById(request.params.id)
   if (toUpdate.length === 0) {
     return response.status(400).end()
   } else {
