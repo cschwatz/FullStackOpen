@@ -13,7 +13,7 @@ blogsRouter.post('/', async (request, response) => {
   if (!request.token) {
     return response.status(401).json({error: "You are not authenticated"})
   }
-  
+
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
   
   if (!decodedToken.id) {
@@ -42,9 +42,16 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  const toDelete = await Blog.find({id: request.params.id})
-  if (toDelete.length === 0) {
+  if (!request.token) {
+    return response.status(401).json({error: "You are not authenticated"})
+  }
+
+  const toDelete = await Blog.findById(request.params.id)
+  const currentUser = jwt.verify(request.token, process.env.SECRET) //returns username, id, name
+  if (!toDelete) {
     response.status(400).end()
+  } else if (toDelete.user.toString() !== currentUser.id.toString()) {
+    response.status(401).json({error: "You are not the owner of this Blog"})
   } else {
     await Blog.findByIdAndDelete(request.params.id)
     response.status(204).end()
