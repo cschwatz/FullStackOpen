@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken')
+
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
 
@@ -19,7 +21,14 @@ const tokenExtractor = (request, response, next) => {
     next()
 }
 
+const userExtractor = (request, response, next) => {
+    const currentUser = jwt.verify(request.token, process.env.SECRET).id.toString()
+    request.user = currentUser
+    next()
+}
+
 module.exports = {
     errorHandler,
-    tokenExtractor
+    tokenExtractor,
+    userExtractor
 }
