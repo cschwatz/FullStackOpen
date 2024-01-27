@@ -102,8 +102,12 @@ const App = () => {
       setUsername('')
       setPassword('')
       console.log('Congratulations, youre connected', user)
+      changeNotification(`Welcome ${user.name}!`, 'success')
+      setTimeout(() => changeNotification(null), 5000)
     } catch (exception) {
       console.log('Wrong credentials')
+      changeNotification(`wrong username or password`, 'unsuccess')
+      setTimeout(() => changeNotification(null), 5000)
       setUsername('')
       setPassword('')
     }
