@@ -28,6 +28,28 @@ const LoginForm = ({username, password, setUsername, setPassword, handleLogin}) 
   )
 }
 
+const BlogForm = ({ title, url, handleBlogCreation, setTitle, setUrl }) => {
+  return(
+    <div>
+      <form onSubmit={handleBlogCreation}>
+        title
+        <input 
+        type="text"
+        value={title}
+        onChange={({target}) => setTitle(target.value)}
+        />
+        url
+        <input
+        type="text"
+        value={url}
+        onChange={({target}) => setUrl(target.value)}
+        />
+      <button type="submit">Create</button>
+      </form>
+    </div>
+  )
+}
+
 const LogoutButton = ({ handleLogout }) => {
   return(
     <div>
@@ -40,6 +62,8 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [title, setTitle] = useState('')
+  const [url, setUrl] = useState('')
   const [user, setUser] = useState(null)
 
   const handleLogin = async (event) => {
@@ -50,6 +74,7 @@ const App = () => {
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -59,6 +84,23 @@ const App = () => {
       setUsername('')
       setPassword('')
     }
+  }
+
+  const handleBlogCreation = async (event) => {
+    event.preventDefault()
+    const newBlog = {
+      title: title,
+      url: url
+    }
+    try {
+      const returnedBlog = await blogService.create(newBlog)
+      setBlogs(blogs.concat(returnedBlog))
+      setTitle('')
+      setUrl('')
+    } catch(exception) {
+      console.log(exception)
+      console.log(exception.message)
+    } 
   }
 
   const handleLogout = () => {
@@ -77,6 +119,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -95,7 +138,15 @@ const App = () => {
     <div>
       <p>{user.name} logged in</p>
       <LogoutButton handleLogout={handleLogout} />
-      <h2>blogs</h2>
+      <h2>Create new Blog</h2>
+      <BlogForm 
+      title={title}
+      url={url}
+      handleBlogCreation={handleBlogCreation}
+      setTitle={setTitle}
+      setUrl={setUrl}
+      />
+      <h2>Blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
