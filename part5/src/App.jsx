@@ -50,6 +50,27 @@ const BlogForm = ({ title, url, handleBlogCreation, setTitle, setUrl }) => {
   )
 }
 
+const Notification = ({message, type}) => {
+  if (message === null) {
+    return null
+  }
+
+  const notificationStyle = {
+    color: type === 'success' ? 'green' : 'red',
+    background: 'lightgrey',
+    borderStyle: message ? 'solid' : 'none',
+    borderRadius: 5,
+    padding: message ? 10 : 0,
+    fontSize: 20,
+  }
+
+  return(
+    <div style={notificationStyle}>
+      {message}
+    </div>
+  )
+}
+
 const LogoutButton = ({ handleLogout }) => {
   return(
     <div>
@@ -65,6 +86,8 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
   const [user, setUser] = useState(null)
+  const [notification, setNotification] = useState('')
+  const [notificationType, setNotificationType] = useState('')
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -97,10 +120,18 @@ const App = () => {
       setBlogs(blogs.concat(returnedBlog))
       setTitle('')
       setUrl('')
+      changeNotification(`The blog ${title} was created by ${user.name}`, 'success')
+      setTimeout(() => changeNotification(null), 5000)
     } catch(exception) {
       console.log(exception)
-      console.log(exception.message)
+      changeNotification(`Whoops, something went wrong`, 'unsuccess')
+      setTimeout(() => changeNotification(null), 5000)
     } 
+  }
+
+  const changeNotification = (message, type) => {
+    setNotification(message)
+    setNotificationType(type)
   }
 
   const handleLogout = () => {
@@ -138,6 +169,7 @@ const App = () => {
     <div>
       <p>{user.name} logged in</p>
       <LogoutButton handleLogout={handleLogout} />
+      <Notification message={notification} type={notificationType} />
       <h2>Create new Blog</h2>
       <BlogForm 
       title={title}
