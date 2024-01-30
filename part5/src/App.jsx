@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Toggleable from './components/Togglable'
 
 const LoginForm = ({username, password, setUsername, setPassword, handleLogin}) => {
   return(
@@ -174,14 +175,16 @@ const App = () => {
       <p>{user.name} logged in</p>
       <LogoutButton handleLogout={handleLogout} />
       <Notification message={notification} type={notificationType} />
-      <h2>Create new Blog</h2>
-      <BlogForm 
-      title={title}
-      url={url}
-      handleBlogCreation={handleBlogCreation}
-      setTitle={setTitle}
-      setUrl={setUrl}
-      />
+      <Toggleable buttonLabel="new Blog">
+        <h2>Create new Blog</h2>
+        <BlogForm 
+        title={title}
+        url={url}
+        handleBlogCreation={handleBlogCreation}
+        setTitle={setTitle}
+        setUrl={setUrl}
+        />
+      </Toggleable>
       <h2>Blogs</h2>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
