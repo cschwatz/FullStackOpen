@@ -145,7 +145,7 @@ const App = () => {
       <p>{user.name} logged in</p>
       <LogoutButton handleLogout={handleLogout} />
       <Notification message={notification} type={notificationType} />
-      <Toggleable buttonLabel="new Blog">
+      <Toggleable buttonLabel="new Blog" hideLabel="cancel">
         <h2>Create new Blog</h2>
         <BlogForm
         handleBlogCreation={handleBlogCreation}
