@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Toggleable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 const LoginForm = ({username, password, setUsername, setPassword, handleLogin}) => {
   return(
@@ -24,28 +25,6 @@ const LoginForm = ({username, password, setUsername, setPassword, handleLogin}) 
         onChange={({target}) => setPassword(target.value)}
         />
         <button type="submit">Login</button>
-      </form>
-    </div>
-  )
-}
-
-const BlogForm = ({ title, url, handleBlogCreation, setTitle, setUrl }) => {
-  return(
-    <div>
-      <form onSubmit={handleBlogCreation}>
-        title
-        <input 
-        type="text"
-        value={title}
-        onChange={({target}) => setTitle(target.value)}
-        />
-        url
-        <input
-        type="text"
-        value={url}
-        onChange={({target}) => setUrl(target.value)}
-        />
-      <button type="submit">Create</button>
       </form>
     </div>
   )
@@ -84,8 +63,6 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [title, setTitle] = useState('')
-  const [url, setUrl] = useState('')
   const [user, setUser] = useState(null)
   const [notification, setNotification] = useState('')
   const [notificationType, setNotificationType] = useState('')
@@ -114,18 +91,11 @@ const App = () => {
     }
   }
 
-  const handleBlogCreation = async (event) => {
-    event.preventDefault()
-    const newBlog = {
-      title: title,
-      url: url
-    }
+  const handleBlogCreation = async (blogObject) => {
     try {
-      const returnedBlog = await blogService.create(newBlog)
+      const returnedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(returnedBlog))
-      setTitle('')
-      setUrl('')
-      changeNotification(`The blog ${title} was created by ${user.name}`, 'success')
+      changeNotification(`The blog ${blogObject.title} was created by ${user.name}`, 'success')
       setTimeout(() => changeNotification(null), 5000)
     } catch(exception) {
       console.log(exception)
@@ -177,12 +147,8 @@ const App = () => {
       <Notification message={notification} type={notificationType} />
       <Toggleable buttonLabel="new Blog">
         <h2>Create new Blog</h2>
-        <BlogForm 
-        title={title}
-        url={url}
+        <BlogForm
         handleBlogCreation={handleBlogCreation}
-        setTitle={setTitle}
-        setUrl={setUrl}
         />
       </Toggleable>
       <h2>Blogs</h2>
