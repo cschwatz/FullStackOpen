@@ -104,6 +104,18 @@ const App = () => {
     } 
   }
 
+  const handleBlogUpdate = async (id, blogObject) => {
+    try {
+      const returnedBlog = await blogService.update(id, blogObject)
+      changeNotification(`The blog ${blogObject.titke} was updated`, 'success')
+      setTimeout(() => changeNotification(null), 5000)
+    } catch(exception) {
+      console.log(exception)
+      changeNotification(`Whoops, something went wrong`, 'unsuccess')
+      setTimeout(() => changeNotification(null), 5000)
+    }
+  }
+
   const changeNotification = (message, type) => {
     setNotification(message)
     setNotificationType(type)
@@ -153,7 +165,7 @@ const App = () => {
       </Toggleable>
       <h2>Blogs</h2>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleBlogUpdate={handleBlogUpdate}/>
       )}
     </div>
   )
