@@ -21,10 +21,13 @@ const Blog = ({ blog, handleBlogUpdate }) => {
   }
 
   const addLike = async (event) => {
-    const updatedLikes = blog.likes + 1
-    const updatedBlog = {...blog, "likes": updatedLikes}
-    await handleBlogUpdate(blog.id, updatedBlog)
-    setLikes(updatedLikes)
+    setLikes((previousLikes) => {
+      const updatedLikes = previousLikes + 1
+      const updatedBlog = {...blog, "likes": updatedLikes}
+      handleBlogUpdate(blog.id, updatedBlog)
+      console.log(updatedBlog)
+      return updatedLikes
+    })
   }
 
   return(

@@ -105,6 +105,7 @@ const App = () => {
   }
 
   const handleBlogUpdate = async (id, blogObject) => {
+    console.log(blogObject)
     try {
       const returnedBlog = await blogService.update(id, blogObject)
       changeNotification(`The blog ${blogObject.titke} was updated`, 'success')
@@ -164,7 +165,9 @@ const App = () => {
         />
       </Toggleable>
       <h2>Blogs</h2>
-      {blogs.map(blog =>
+      {blogs
+      .sort((blogA, blogB) => blogB.likes - blogA.likes)
+      .map(blog =>
         <Blog key={blog.id} blog={blog} handleBlogUpdate={handleBlogUpdate}/>
       )}
     </div>
