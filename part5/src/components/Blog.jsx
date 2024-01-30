@@ -23,11 +23,11 @@ const Blog = ({ blog }) => {
     <div>
     <div style={blogStyle}>
       {blog.title}
-      <button onClick={toggleVisibility}>hide</button>
+      <button onClick={toggleVisibility}>{visible ? 'hide' : 'show'}</button>
       <div style={hiddenStyle}>
-        <p>{blog.url}</p>
+        <p><a href={`${blog.url}`}>{blog.url}</a></p>
         <div>
-        Likes {blog.likes}
+        Likes {blog.likes} 
         <button>Like</button>
         </div>
         <p>{blog.author}</p>
