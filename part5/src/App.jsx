@@ -105,10 +105,21 @@ const App = () => {
   }
 
   const handleBlogUpdate = async (id, blogObject) => {
-    console.log(blogObject)
     try {
       const returnedBlog = await blogService.update(id, blogObject)
       changeNotification(`The blog ${blogObject.titke} was updated`, 'success')
+      setTimeout(() => changeNotification(null), 5000)
+    } catch(exception) {
+      console.log(exception)
+      changeNotification(`Whoops, something went wrong`, 'unsuccess')
+      setTimeout(() => changeNotification(null), 5000)
+    }
+  }
+
+  const handleBlogDeletion = async (id) => {
+    try {
+      const returnedData = await blogService.remove(id)
+      changeNotification(`The blog was removed`, 'success')
       setTimeout(() => changeNotification(null), 5000)
     } catch(exception) {
       console.log(exception)
@@ -126,12 +137,12 @@ const App = () => {
     window.localStorage.clear()
     setUser(null)
   }
-
+// renders the page every time it loads for the first time AND if a blog is deleted.
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
     )  
-  }, [])
+  }, [handleBlogDeletion])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -168,7 +179,12 @@ const App = () => {
       {blogs
       .sort((blogA, blogB) => blogB.likes - blogA.likes)
       .map(blog =>
-        <Blog key={blog.id} blog={blog} handleBlogUpdate={handleBlogUpdate}/>
+        <Blog 
+        key={blog.id} 
+        blog={blog} 
+        handleBlogUpdate={handleBlogUpdate}
+        handleDeletion={handleBlogDeletion}
+        />
       )}
     </div>
   )
