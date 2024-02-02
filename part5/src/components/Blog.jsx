@@ -31,7 +31,9 @@ const Blog = ({ blog, handleBlogUpdate, handleDeletion }) => {
   }
 
   const removeBlog = async () => {
-    await handleDeletion(blog.id)
+    if (window.confirm(`Are you sure you want to remove ${blog.title}?`)){
+      await handleDeletion(blog.id)
+    }
   }
 
   return(
