@@ -34,4 +34,19 @@ describe('Blog tests', () => {
     await user.click(button)
     expect(hiddenPart).toHaveStyle({ display: 'block' })
   })
+
+  test('Like button works if clicked', async () => {
+    const blog = {
+      title: 'testing',
+      author: 'testingus',
+      url: 'testing.com/test'
+    }
+    const mockHandler = jest.fn()
+    const user = userEvent.setup()
+    render(<Blog blog={blog} handleBlogUpdate={mockHandler}/>)
+    const button = screen.getByText('Like')
+    await user.click(button)
+    await user.click(button)
+    expect(mockHandler.mock.calls).toHaveLength(2)
+  })
 })
