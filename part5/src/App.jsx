@@ -2,27 +2,27 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import Toggleable from './components/Togglable'
+import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 
-const LoginForm = ({username, password, setUsername, setPassword, handleLogin}) => {
+const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }) => {
   return(
     <div>
       <form onSubmit={handleLogin}>
         username
-        <input 
-        type="text"
-        value={username}
-        name="Username"
-        onChange={({target}) => setUsername(target.value)}
+        <input
+          type="text"
+          value={username}
+          name="Username"
+          onChange={({ target }) => setUsername(target.value)}
         />
         <br></br>
         password
-        <input 
-        type="password"
-        value={password}
-        name="Password"
-        onChange={({target}) => setPassword(target.value)}
+        <input
+          type="password"
+          value={password}
+          name="Password"
+          onChange={({ target }) => setPassword(target.value)}
         />
         <button type="submit">Login</button>
       </form>
@@ -30,7 +30,7 @@ const LoginForm = ({username, password, setUsername, setPassword, handleLogin}) 
   )
 }
 
-const Notification = ({message, type}) => {
+const Notification = ({ message, type }) => {
   if (message === null) {
     return null
   }
@@ -69,7 +69,6 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
     try {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem(
@@ -84,7 +83,7 @@ const App = () => {
       setTimeout(() => changeNotification(null), 5000)
     } catch (exception) {
       console.log('Wrong credentials')
-      changeNotification(`wrong username or password`, 'unsuccess')
+      changeNotification('wrong username or password', 'unsuccess')
       setTimeout(() => changeNotification(null), 5000)
       setUsername('')
       setPassword('')
@@ -99,9 +98,9 @@ const App = () => {
       setTimeout(() => changeNotification(null), 5000)
     } catch(exception) {
       console.log(exception)
-      changeNotification(`Whoops, something went wrong`, 'unsuccess')
+      changeNotification('Whoops, something went wrong', 'unsuccess')
       setTimeout(() => changeNotification(null), 5000)
-    } 
+    }
   }
 
   const handleBlogUpdate = async (id, blogObject) => {
@@ -111,7 +110,7 @@ const App = () => {
       setTimeout(() => changeNotification(null), 5000)
     } catch(exception) {
       console.log(exception)
-      changeNotification(`Whoops, something went wrong`, 'unsuccess')
+      changeNotification('Whoops, something went wrong', 'unsuccess')
       setTimeout(() => changeNotification(null), 5000)
     }
   }
@@ -119,11 +118,11 @@ const App = () => {
   const handleBlogDeletion = async (id) => {
     try {
       const returnedData = await blogService.remove(id)
-      changeNotification(`The blog was removed`, 'success')
+      changeNotification('The blog was removed', 'success')
       setTimeout(() => changeNotification(null), 5000)
     } catch(exception) {
       console.log(exception)
-      changeNotification(`Whoops, something went wrong`, 'unsuccess')
+      changeNotification('Whoops, something went wrong', 'unsuccess')
       setTimeout(() => changeNotification(null), 5000)
     }
   }
@@ -137,11 +136,11 @@ const App = () => {
     window.localStorage.clear()
     setUser(null)
   }
-// renders the page every time it loads for the first time AND if a blog is deleted.
+  // renders the page every time it loads for the first time AND if a blog is deleted.
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [handleBlogDeletion])
 
   useEffect(() => {
@@ -155,12 +154,12 @@ const App = () => {
 
   if (user === null) {
     return (
-      <LoginForm username={username} 
-        password={password} 
-        setUsername={setUsername} 
+      <LoginForm username={username}
+        password={password}
+        setUsername={setUsername}
         setPassword={setPassword}
         handleLogin={handleLogin}
-        />
+      />
     )
   }
 
@@ -169,23 +168,23 @@ const App = () => {
       <p>{user.name} logged in</p>
       <LogoutButton handleLogout={handleLogout} />
       <Notification message={notification} type={notificationType} />
-      <Toggleable buttonLabel="new Blog" hideLabel="cancel">
+      <Togglable buttonLabel="new Blog" hideLabel="cancel">
         <h2>Create new Blog</h2>
         <BlogForm
-        handleBlogCreation={handleBlogCreation}
+          handleBlogCreation={handleBlogCreation}
         />
-      </Toggleable>
+      </Togglable>
       <h2>Blogs</h2>
       {blogs
-      .sort((blogA, blogB) => blogB.likes - blogA.likes)
-      .map(blog =>
-        <Blog 
-        key={blog.id} 
-        blog={blog} 
-        handleBlogUpdate={handleBlogUpdate}
-        handleDeletion={handleBlogDeletion}
-        />
-      )}
+        .sort((blogA, blogB) => blogB.likes - blogA.likes)
+        .map(blog =>
+          <Blog
+            key={blog.id}
+            blog={blog}
+            handleBlogUpdate={handleBlogUpdate}
+            handleDeletion={handleBlogDeletion}
+          />
+        )}
     </div>
   )
 }

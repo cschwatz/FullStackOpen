@@ -23,7 +23,7 @@ const Blog = ({ blog, handleBlogUpdate, handleDeletion }) => {
   const addLike = async (event) => {
     setLikes((previousLikes) => {
       const updatedLikes = previousLikes + 1
-      const updatedBlog = {...blog, "likes": updatedLikes}
+      const updatedBlog = { ...blog, 'likes': updatedLikes }
       handleBlogUpdate(blog.id, updatedBlog)
       console.log(updatedBlog)
       return updatedLikes
@@ -38,20 +38,20 @@ const Blog = ({ blog, handleBlogUpdate, handleDeletion }) => {
 
   return(
     <div>
-    <div style={blogStyle}>
-      {blog.title}
-      <button onClick={toggleVisibility}>{visible ? 'hide' : 'show'}</button>
-      <div style={hiddenStyle}>
-        <p><a href={`${blog.url}`}>{blog.url}</a></p>
-        <div>
-        Likes {likes} 
-        <button onClick={addLike}>Like</button>
+      <div style={blogStyle} className='blog'>
+        {blog.title}
+        <button onClick={toggleVisibility}>{visible ? 'hide' : 'show'}</button>
+        <div style={hiddenStyle} className='hiddenBlogPart'>
+          <p><a href={`${blog.url}`}>{blog.url}</a></p>
+          <div>
+          Likes {likes}
+            <button onClick={addLike}>Like</button>
+          </div>
+          <button onClick={removeBlog}>remove</button>
         </div>
         <p>{blog.author}</p>
-        <button onClick={removeBlog}>remove</button>
       </div>
     </div>
-  </div>
-)}
+  )}
 
 export default Blog
