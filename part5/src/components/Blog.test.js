@@ -3,6 +3,7 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
+import BlogForm from './BlogForm'
 
 describe('Blog tests', () => {
   test('Blog renders only title and author by default', () => {
@@ -48,5 +49,24 @@ describe('Blog tests', () => {
     await user.click(button)
     await user.click(button)
     expect(mockHandler.mock.calls).toHaveLength(2)
+  })
+})
+
+describe('Blog form tests', () => {
+  test('Check if form calls the prop passed in as argument', async () => {
+    const createBlog = jest.fn()
+    const user = userEvent.setup()
+
+    render(<BlogForm handleBlogCreation={createBlog} />)
+
+    const title = screen.getByPlaceholderText('title of the blog')
+    const url = screen.getByPlaceholderText('url of the blog')
+    const createButton = screen.getByText('Create')
+    await user.type(title, 'title of test')
+    await user.type(url, 'url of test')
+    await user.click(createButton)
+    expect(createBlog.mock.calls).toHaveLength(1)
+    expect(createBlog.mock.calls[0][0].title).toBe('title of test')
+    expect(createBlog.mock.calls[0][0].url).toBe('url of test')
   })
 })

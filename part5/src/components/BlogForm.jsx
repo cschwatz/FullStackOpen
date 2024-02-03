@@ -22,12 +22,14 @@ const BlogForm = ({ handleBlogCreation }) => {
           type="text"
           value={title}
           onChange={({ target }) => setTitle(target.value)}
+          placeholder='title of the blog'
         />
           url
         <input
           type="text"
           value={url}
           onChange={({ target }) => setUrl(target.value)}
+          placeholder='url of the blog'
         />
         <button type="submit">Create</button>
       </form>
