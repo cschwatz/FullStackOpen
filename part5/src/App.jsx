@@ -56,7 +56,7 @@ const Notification = ({ message, type }) => {
 const LogoutButton = ({ handleLogout }) => {
   return(
     <div>
-      <button onClick={handleLogout}>Logout</button>
+      <button id='logout-button' onClick={handleLogout}>Logout</button>
     </div>
   )
 }
@@ -189,6 +189,7 @@ const App = () => {
             blog={blog}
             handleBlogUpdate={handleBlogUpdate}
             handleDeletion={handleBlogDeletion}
+            userName={user.name}
           />
         )}
     </div>
