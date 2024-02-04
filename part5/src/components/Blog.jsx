@@ -40,7 +40,7 @@ const Blog = ({ blog, handleBlogUpdate, handleDeletion }) => {
     <div>
       <div style={blogStyle} className='blog'>
         {blog.title}
-        <button onClick={toggleVisibility}>{visible ? 'hide' : 'show'}</button>
+        <button id='show-hide-button' onClick={toggleVisibility}>{visible ? 'hide' : 'show'}</button>
         <div style={hiddenStyle} className='hiddenBlogPart'>
           <p><a href={`${blog.url}`}>{blog.url}</a></p>
           <div>
