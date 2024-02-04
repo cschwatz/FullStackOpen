@@ -15,6 +15,7 @@ const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }
           value={username}
           name="Username"
           onChange={({ target }) => setUsername(target.value)}
+          id='username'
         />
         <br></br>
         password
@@ -23,8 +24,9 @@ const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }
           value={password}
           name="Password"
           onChange={({ target }) => setPassword(target.value)}
+          id='password'
         />
-        <button type="submit">Login</button>
+        <button id='login-button' type="submit">Login</button>
       </form>
     </div>
   )
@@ -45,7 +47,7 @@ const Notification = ({ message, type }) => {
   }
 
   return(
-    <div style={notificationStyle}>
+    <div className='notification' style={notificationStyle}>
       {message}
     </div>
   )
@@ -155,12 +157,15 @@ const App = () => {
 
   if (user === null) {
     return (
-      <LoginForm username={username}
-        password={password}
-        setUsername={setUsername}
-        setPassword={setPassword}
-        handleLogin={handleLogin}
-      />
+      <div>
+        <Notification message={notification} type={notificationType} />
+        <LoginForm username={username}
+          password={password}
+          setUsername={setUsername}
+          setPassword={setPassword}
+          handleLogin={handleLogin}
+        />
+      </div>
     )
   }
 
