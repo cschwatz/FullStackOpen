@@ -118,6 +118,7 @@ const App = () => {
   const handleBlogDeletion = async (id) => {
     try {
       const returnedData = await blogService.remove(id)
+      setBlogs(blogs.filter((blog) => blog.id !== id))
       changeNotification('The blog was removed', 'success')
       setTimeout(() => changeNotification(null), 5000)
     } catch(exception) {
@@ -141,7 +142,7 @@ const App = () => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
     )
-  }, [handleBlogDeletion])
+  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
