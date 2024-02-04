@@ -43,11 +43,11 @@ const Blog = ({ blog, handleBlogUpdate, handleDeletion }) => {
         <button id='show-hide-button' onClick={toggleVisibility}>{visible ? 'hide' : 'show'}</button>
         <div style={hiddenStyle} className='hiddenBlogPart'>
           <p><a href={`${blog.url}`}>{blog.url}</a></p>
-          <div>
-          Likes {likes}
-            <button onClick={addLike}>Like</button>
+          <div id='likes-div'>
+            Likes {likes}
+            <button id='like-button' onClick={addLike}>Like</button>
           </div>
-          <button onClick={removeBlog}>remove</button>
+          <button id='remove-blog-button' onClick={removeBlog}>remove</button>
         </div>
         <p>{blog.author}</p>
       </div>
