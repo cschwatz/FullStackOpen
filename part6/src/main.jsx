@@ -7,21 +7,39 @@ import reducer from './reducer'
 const store = createStore(reducer)
 
 const App = () => {
-  const good = () => {
+  const goodButton = () => {
     store.dispatch({
       type: 'GOOD'
     })
   }
 
+  const okButton = () => {
+    store.dispatch({
+      type: 'OK'
+    })
+  }
+
+  const badButton = () => {
+    store.dispatch({
+      type: 'BAD'
+    })
+  }
+
+  const resetButton = () => {
+    store.dispatch({
+      type: 'ZERO'
+    })
+  }
+
   return (
     <div>
-      <button onClick={good}>good</button> 
-      <button>ok</button> 
-      <button>bad</button>
-      <button>reset stats</button>
+      <button onClick={goodButton}>good</button> 
+      <button onClick={okButton}>ok</button> 
+      <button onClick={badButton}>bad</button>
+      <button onClick={resetButton}>reset stats</button>
       <div>good {store.getState().good}</div>
-      <div>ok</div>
-      <div>bad</div>
+      <div>ok {store.getState().ok}</div>
+      <div>bad {store.getState().bad}</div>
     </div>
   )
 }
