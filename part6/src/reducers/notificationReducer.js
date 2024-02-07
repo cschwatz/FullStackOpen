@@ -11,25 +11,11 @@ const notificationSlice = createSlice({
             return newNotification
         },
         deleteNotification(state, action) {
-            const newNotification = action.payload
+            const newNotification = ''
             return newNotification
         }
     }
 })
-
-export const setNotification = (content) => {
-    return {
-        type: 'notifications/createNotification',
-        payload: content
-    }
-}
-
-export const hideNotification = () => {
-    return {
-        type: 'notifications/deleteNotification',
-        payload: ''
-    }
-}
 
 export const { createNotification, deleteNotification } = notificationSlice.actions
 export default notificationSlice.reducer
