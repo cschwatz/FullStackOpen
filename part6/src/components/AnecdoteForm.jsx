@@ -13,7 +13,18 @@ const AnecdoteForm = () => {
     onSuccess: (newAnecdote) => {
       const anecdotes = queryClient.getQueryData(['anecdotes'])
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
-    } 
+    } ,
+    onError: () => {
+      notificationDispatch({
+        type: 'NEW_NOTIFICATION',
+        payload: `the anecdote must have at least 5 characters`
+      })
+      setTimeout(() => {
+        notificationDispatch({
+          type: 'DELETE_NOTIFICATION'
+        })
+      }, 5000)
+    }
   })
 
   const onCreate = (event) => {
