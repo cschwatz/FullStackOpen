@@ -88,16 +88,16 @@ const Footer = () => (
 
 const CreateNew = ({ addNew, handleNotification }) => {
 
-  const content = useField('text')
-  const author = useField('text')
-  const info = useField('text')
+  const { reset: resetContent, ...content } = useField("text");
+  const { reset: resetAuthor, ...author } = useField("text");
+  const { reset: resetInfo, ...info } = useField("text");
 
   const navigate = useNavigate()
 
   const handleFormReset = () => {
-    content.reset()
-    author.reset()
-    info.reset()
+    resetContent()
+    resetAuthor()
+    resetInfo()
   }
 
   const handleSubmit = (e) => {
@@ -121,7 +121,7 @@ const CreateNew = ({ addNew, handleNotification }) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' {...content} />
+          <input name='content' {...(content)} />
         </div>
         <div>
           author
