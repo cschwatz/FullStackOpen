@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import {
   BrowserRouter as Router,
-  Routes, Route, Link, useMatch
+  Routes, Route, Link, 
+  useMatch, useNavigate
 } from 'react-router-dom'
 
 const Menu = () => {
@@ -35,6 +36,28 @@ const Anecdote = ({ anecdote }) => {
     <div>
       <h2>{anecdote.content}</h2>
       <p>has {anecdote.votes} votes</p>
+      <p>For more info: <a href={anecdote.info}>{anecdote.info}</a></p>
+    </div>
+  )
+}
+
+const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null
+  }
+
+  const notificationStyle = {
+    color: type === 'success' ? 'green' : 'red',
+    background: 'lightgrey',
+    borderStyle: message ? 'solid' : 'none',
+    borderRadius: 5,
+    padding: message ? 10 : 0,
+    fontSize: 20,
+  }
+
+  return(
+    <div className='notification' style={notificationStyle}>
+      {message}
     </div>
   )
 }
@@ -61,20 +84,27 @@ const Footer = () => (
   </div>
 )
 
-const CreateNew = (props) => {
+const CreateNew = ({ addNew, handleNotification }) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
 
+  const navigate = useNavigate()
+
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.addNew({
+    addNew({
       content,
       author,
       info,
       votes: 0
     })
+    navigate('/')
+    handleNotification(`The ${content} anecdote was created`, 'success')
+    setTimeout(() => {
+      handleNotification('')
+    }, 5000)
   }
 
   return (
@@ -119,10 +149,16 @@ const App = () => {
   ])
 
   const [notification, setNotification] = useState('')
+  const [notificationType, setNotificationType] = useState('unsuccess')
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+  }
+
+  const handleNotification = (message, type='unsuccess') => {
+    setNotification(message)
+    setNotificationType(type)
   }
 
   const anecdoteById = (id) =>
@@ -146,13 +182,14 @@ const App = () => {
 
   return (
     <div>
+      <Notification message={notification} type={notificationType}/>
       <h1>Software anecdotes</h1>
       <Menu />
       <Routes>
-        <Route path='/' element={<AnecdoteList anecdotes={anecdotes}/>} />
+        <Route path='/' element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path='/:id' element={<Anecdote anecdote={anecdote} />} />
         <Route path='/about' element={<About />} />
-        <Route path='/create' element={<CreateNew addNew={addNew} />} />
+        <Route path='/create' element={<CreateNew addNew={addNew} handleNotification={handleNotification} />} />
       </Routes>
       <Footer />
     </div>
