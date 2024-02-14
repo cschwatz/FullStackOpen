@@ -94,6 +94,11 @@ const CreateNew = ({ addNew, handleNotification }) => {
 
   const navigate = useNavigate()
 
+  const handleFormReset = () => {
+    content.reset()
+    author.reset()
+    info.reset()
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -128,6 +133,7 @@ const CreateNew = ({ addNew, handleNotification }) => {
         </div>
         <button>create</button>
       </form>
+        <button onClick={handleFormReset}>reset</button>
     </div>
   )
 
