@@ -9,20 +9,8 @@
       "content": "best feature ever <3"
     },
     {
-      "content": "hellooooo",
+      "content": "a",
       "id": 3
-    },
-    {
-      "content": "aaaaa",
-      "id": 4
-    },
-    {
-      "content": "bbbbb",
-      "id": 5
-    },
-    {
-      "content": "ccccc",
-      "id": 6
     }
   ],
   "persons": [
@@ -35,11 +23,6 @@
       "id": 2,
       "name": "hellas",
       "number": "012-123123"
-    },
-    {
-      "name": "test",
-      "number": "111111",
-      "id": 3
     }
   ]
 }
