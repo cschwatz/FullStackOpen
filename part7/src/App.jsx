@@ -1,91 +1,179 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
-import Notification from "./components/Notification";
-import { useDispatch } from 'react-redux';
-import { deleteNotification, updateNotification } from "./reducers/notificationReducer";
+import { useState, useEffect } from 'react'
+import Blog from './components/Blog'
+import blogService from './services/blogs'
+import loginService from './services/login'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
+import { useDispatch } from 'react-redux'
+import { deleteNotification, updateNotification } from './reducers/notificationReducer'
 
-const useField = (type) => {
-  const [value, setValue] = useState("");
+const LoginForm = ({ username, password, setUsername, setPassword, handleLogin }) => {
+  return(
+    <div>
+      <form onSubmit={handleLogin}>
+        username
+        <input
+          type="text"
+          value={username}
+          name="Username"
+          onChange={({ target }) => setUsername(target.value)}
+          id='username'
+        />
+        <br></br>
+        password
+        <input
+          type="password"
+          value={password}
+          name="Password"
+          onChange={({ target }) => setPassword(target.value)}
+          id='password'
+        />
+        <button id='login-button' type="submit">Login</button>
+      </form>
+    </div>
+  )
+}
 
-  const onChange = (event) => {
-    setValue(event.target.value);
-  };
-
-  return { type, value, onChange };
-};
-
-const useResource = (baseUrl) => {
-  const [resources, setResources] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get(baseUrl)
-      .then((response) => setResources(resources.concat(response.data)));
-  }, []);
-
-  const create = (resource) => {
-    axios.post(baseUrl, resource).then((response) => {
-      const newResource = response.data;
-      setResources([...resources, newResource]);
-    });
-  };
-
-  const service = {
-    create: create,
-  };
-
-  return [resources, service];
-};
+const LogoutButton = ({ handleLogout }) => {
+  return(
+    <div>
+      <button id='logout-button' onClick={handleLogout}>Logout</button>
+    </div>
+  )
+}
 
 const App = () => {
-  const content = useField("text");
-  const name = useField("text");
-  const number = useField("text");
-  const dispatch = useDispatch();
+  const [blogs, setBlogs] = useState([])
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [user, setUser] = useState(null)
+  const [notification, setNotification] = useState('')
+  const [notificationType, setNotificationType] = useState('')
+  const dispatch = useDispatch()
 
-  const [notes, noteService] = useResource("http://localhost:3005/notes");
-  const [persons, personService] = useResource("http://localhost:3005/persons");
+  const handleLogin = async (event) => {
+    event.preventDefault()
+    try {
+      const user = await loginService.login({ username, password })
+      window.localStorage.setItem(
+        'loggedBlogappUser', JSON.stringify(user)
+      )
+      blogService.setToken(user.token)
+      setUser(user)
+      setUsername('')
+      setPassword('')
+      console.log('Congratulations, youre connected', user)
+      dispatch(updateNotification([`Welcome ${user.name}!`, 'success']));
+      setTimeout(() => dispatch(deleteNotification()), 5000)
+    } catch (exception) {
+      console.log('Wrong credentials')
+      dispatch(updateNotification(['wrong username or password', 'unsuccess']));
+      setTimeout(() => dispatch(deleteNotification()), 5000)
+      setUsername('')
+      setPassword('')
+    }
+  }
 
-  const handleNoteSubmit = (event) => {
-    event.preventDefault();
-    noteService.create({ content: content.value });
-    dispatch(updateNotification([`The Note ${content.value} was created!`, 'success']));
-    setTimeout(() => {
-      dispatch(deleteNotification(''))
-    }, 5000)
-  };
+  const handleBlogCreation = async (blogObject) => {
+    try {
+      const returnedBlog = await blogService.create(blogObject)
+      setBlogs(blogs.concat(returnedBlog))
+      dispatch(updateNotification([`The blog ${blogObject.title} was created by ${user.name}`, 'success']))
+      setTimeout(() => dispatch(deleteNotification()), 5000)
+    } catch(exception) {
+      console.log(exception)
+      dispatch(updateNotification(['Whoops, something went wrong', 'unsuccess']))
+      setTimeout(() => dispatch(deleteNotification()), 5000)
+    }
+  }
 
-  const handlePersonSubmit = (event) => {
-    event.preventDefault();
-    personService.create({ name: name.value, number: number.value });
-    dispatch(updateNotification(`The Person ${name.value} was created!`, 'success'));
-  };
+  const handleBlogUpdate = async (id, blogObject) => {
+    try {
+      const returnedBlog = await blogService.update(id, blogObject)
+      dispatch(updateNotification([`The blog ${blogObject.titke} was updated`, 'success']))
+      setTimeout(() => dispatch(deleteNotification()), 5000)
+    } catch(exception) {
+      console.log(exception)
+      dispatch(updateNotification(['Whoops, something went wrong', 'unsuccess']))
+      setTimeout(() => dispatch(deleteNotification()), 5000)
+    }
+  }
+
+  const handleBlogDeletion = async (id) => {
+    try {
+      const returnedData = await blogService.remove(id)
+      setBlogs(blogs.filter((blog) => blog.id !== id))
+      dispatch(updateNotification(['The blog was removed', 'success']))
+      setTimeout(() => dispatch(deleteNotification()), 5000)
+    } catch(exception) {
+      console.log(exception)
+      dispatch(updateNotification(['Whoops, something went wrong', 'unsuccess']))
+      setTimeout(() => dispatch(deleteNotification()), 5000)
+    }
+  }
+
+  const handleLogout = () => {
+    window.localStorage.clear()
+    setUser(null)
+  }
+  // renders the page every time it loads for the first time AND if a blog is deleted.
+  useEffect(() => {
+    blogService.getAll().then(blogs =>
+      setBlogs( blogs )
+    )
+  }, [])
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
+  }, [])
+
+  if (user === null) {
+    return (
+      <div>
+        <Notification message={notification} type={notificationType} />
+        <LoginForm username={username}
+          password={password}
+          setUsername={setUsername}
+          setPassword={setPassword}
+          handleLogin={handleLogin}
+        />
+      </div>
+    )
+  }
 
   return (
     <div>
+      <p>{user.name} logged in</p>
+      <LogoutButton handleLogout={handleLogout} />
       <Notification />
-      <h2>notes</h2>
-      <form onSubmit={handleNoteSubmit}>
-        <input name='noteForm' {...content} />
-        <button>create</button>
-      </form>
-      {notes.map((n) => (
-        <p key={n.id}>{n.content}</p>
-      ))}
-
-      <h2>persons</h2>
-      <form onSubmit={handlePersonSubmit}>
-        name <input name='nameInput' {...name} /> <br />
-        number <input name='numberInput' {...number} />
-        <button>create</button>
-      </form>
-      {persons.map((n) => (
-        <p key={n.id}>
-          {n.name} {n.number}
-        </p>
-      ))}
+      <Togglable buttonLabel="new Blog" hideLabel="cancel">
+        <h2>Create new Blog</h2>
+        <BlogForm
+          handleBlogCreation={handleBlogCreation}
+        />
+      </Togglable>
+      <h2>Blogs</h2>
+      <div className='blogs'>
+        {blogs
+          .sort((blogA, blogB) => blogB.likes - blogA.likes)
+          .map(blog =>
+            <Blog
+              key={blog.id}
+              blog={blog}
+              handleBlogUpdate={handleBlogUpdate}
+              handleDeletion={handleBlogDeletion}
+              userName={user.name}
+            />
+          )}
+      </div>
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App
