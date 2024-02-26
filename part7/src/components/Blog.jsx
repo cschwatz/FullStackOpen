@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import blogs from '../services/blogs'
+import blogService from '../services/blogs'
+import { useDispatch } from 'react-redux'
+import { updateNotification, deleteNotification } from '../reducers/notificationReducer'
 
-const Blog = ({ blog, handleBlogUpdate, handleDeletion, userName }) => {
+const Blog = ({ blog, handleDeletion, userName, id, blogs, setBlogs }) => {
   const [visible, setVisible] = useState(false)
   const [likes, setLikes] = useState(blog.likes)
+  const dispatch = useDispatch()
 
   const blogStyle = {
     paddingTop: 10,
@@ -20,6 +24,18 @@ const Blog = ({ blog, handleBlogUpdate, handleDeletion, userName }) => {
     setVisible(!visible)
   }
 
+  const handleBlogUpdate = async (id, blogObject) => {
+    try {
+      const returnedBlog = await blogService.update(id, blogObject)
+      dispatch(updateNotification([`The blog ${blogObject.title} was updated`, 'success']))
+      setTimeout(() => dispatch(deleteNotification()), 5000)
+    } catch(exception) {
+      console.log(exception)
+      dispatch(updateNotification(['Whoops, something went wrong', 'unsuccess']))
+      setTimeout(() => dispatch(deleteNotification()), 5000)
+    }
+  }
+
   const addLike = async (event) => {
     setLikes((previousLikes) => {
       const updatedLikes = previousLikes + 1
@@ -30,9 +46,22 @@ const Blog = ({ blog, handleBlogUpdate, handleDeletion, userName }) => {
     })
   }
 
+  const handleBlogDeletion = async (id) => {
+    try {
+      const returnedData = await blogService.remove(id)
+      setBlogs(blogs.filter((blog) => blog.id !== id))
+      dispatch(updateNotification(['The blog was removed', 'success']))
+      setTimeout(() => dispatch(deleteNotification()), 5000)
+    } catch(exception) {
+      console.log(exception)
+      dispatch(updateNotification(['Whoops, something went wrong', 'unsuccess']))
+      setTimeout(() => dispatch(deleteNotification()), 5000)
+    }
+  }
+
   const removeBlog = async () => {
     if (window.confirm(`Are you sure you want to remove ${blog.title}?`)){
-      await handleDeletion(blog.id)
+      await handleBlogDeletion(id)
     }
   }
 
