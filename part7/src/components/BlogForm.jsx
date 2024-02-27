@@ -1,43 +1,35 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { updateNotification, deleteNotification } from '../reducers/notificationReducer'
-import blogService from '../services/blogs'
-import { createBlog } from '../reducers/blogsReducer'
+import { createNewBlog } from '../reducers/blogsReducer'
 
 const BlogForm = ({ user }) => {
   const dispatch = useDispatch()
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
 
-  const handleBlogCreation = async (blogObject) => {
+  const handleBlogCreation = (event) => {
+    event.preventDefault()
+    const newBlogObject = {
+      title: title,
+      url: url
+    }
     try {
-      const returnedBlog = await blogService.create(blogObject)
-      dispatch(createBlog(returnedBlog))
-      dispatch(updateNotification([`The blog ${blogObject.title} was created by ${user.name}`, 'success']))
+      dispatch(createNewBlog(newBlogObject))
+      dispatch(updateNotification([`The blog ${newBlogObject.title} was created by ${user.name}`, 'success']))
       setTimeout(() => dispatch(deleteNotification()), 5000)
     } catch(exception) {
       console.log(exception)
       dispatch(updateNotification(['Whoops, something went wrong', 'unsuccess']))
       setTimeout(() => dispatch(deleteNotification()), 5000)
     }
-  }
-
-  const addBlog = (event) => {
-    console.log(event)
-    console.log(title)
-    console.log(url)
-    event.preventDefault()
-    handleBlogCreation({
-      title: title,
-      url: url
-    })
     setTitle('')
     setUrl('')
   }
 
   return(
     <div>
-      <form onSubmit={addBlog}>
+      <form onSubmit={handleBlogCreation}>
           title
         <input
           type="text"

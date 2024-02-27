@@ -17,7 +17,7 @@ const LoginForm = ({ username, password, setUsername, setPassword, setUser }) =>
       setUser(user)
       setUsername('')
       setPassword('')
-      console.log('Congratulations, you are connected', user)
+      console.log('Congratulations, you are connected')
       dispatch(updateNotification([`Welcome ${user.name}!`, 'success']));
       setTimeout(() => dispatch(deleteNotification()), 5000)
     } catch (exception) {

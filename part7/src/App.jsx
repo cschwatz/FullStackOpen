@@ -1,18 +1,15 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteNotification, updateNotification } from './reducers/notificationReducer'
-import { getAllBlogs } from './reducers/blogsReducer'
 import LoginForm from './components/LoginForm'
 import LogoutButton from './components/LogoutButton'
+import { fetchBlogs } from './reducers/blogsReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const state = useSelector(state => state.blogs)
   const bloglist = [...state] // create a copy of state, because we cant mutate directly in redux
   const [username, setUsername] = useState('')
@@ -20,10 +17,8 @@ const App = () => {
   const [user, setUser] = useState(null)
   const dispatch = useDispatch()
 
-  // renders when page is loaded and when bloglist changes
   useEffect(() => {
-    blogService.getAll()
-      .then(blogs => dispatch(getAllBlogs(blogs)))
+    dispatch(fetchBlogs())
   }, [bloglist])
 
   useEffect(() => {
@@ -70,8 +65,6 @@ const App = () => {
               blog={blog}
               userName={user.name}
               id={blog.id}
-              blogs={blogs}
-              setBlogs={setBlogs}
             />
           )}
       </div>
