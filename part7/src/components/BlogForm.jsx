@@ -4,7 +4,7 @@ import { updateNotification, deleteNotification } from '../reducers/notification
 import blogService from '../services/blogs'
 import { createBlog } from '../reducers/blogsReducer'
 
-const BlogForm = ({ user, blogs, setBlogs }) => {
+const BlogForm = ({ user }) => {
   const dispatch = useDispatch()
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
@@ -12,7 +12,6 @@ const BlogForm = ({ user, blogs, setBlogs }) => {
   const handleBlogCreation = async (blogObject) => {
     try {
       const returnedBlog = await blogService.create(blogObject)
-      // setBlogs(blogs.concat(returnedBlog))
       dispatch(createBlog(returnedBlog))
       dispatch(updateNotification([`The blog ${blogObject.title} was created by ${user.name}`, 'success']))
       setTimeout(() => dispatch(deleteNotification()), 5000)

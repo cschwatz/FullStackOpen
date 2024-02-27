@@ -58,8 +58,6 @@ const App = () => {
         <h2>Create new Blog</h2>
         <BlogForm
           user={user}
-          blogs={blogs}
-          setBlogs={setBlogs}
         />
       </Togglable>
       <h2>Blogs</h2>

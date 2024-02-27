@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import blogs from '../services/blogs'
 import blogService from '../services/blogs'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { updateNotification, deleteNotification } from '../reducers/notificationReducer'
+import { deleteBlog, updateBlog } from '../reducers/blogsReducer'
 
-const Blog = ({ blog, handleDeletion, userName, id, blogs, setBlogs }) => {
+const Blog = ({ blog, userName, id, blogs, setBlogs }) => {
   const [visible, setVisible] = useState(false)
-  const [likes, setLikes] = useState(blog.likes)
+  const state = useSelector(state => state.blogs)
+  const currentLikes = state.find((blog) => blog.id === id).likes
   const dispatch = useDispatch()
 
   const blogStyle = {
@@ -27,6 +29,7 @@ const Blog = ({ blog, handleDeletion, userName, id, blogs, setBlogs }) => {
   const handleBlogUpdate = async (id, blogObject) => {
     try {
       const returnedBlog = await blogService.update(id, blogObject)
+      dispatch(updateBlog(returnedBlog))
       dispatch(updateNotification([`The blog ${blogObject.title} was updated`, 'success']))
       setTimeout(() => dispatch(deleteNotification()), 5000)
     } catch(exception) {
@@ -36,20 +39,16 @@ const Blog = ({ blog, handleDeletion, userName, id, blogs, setBlogs }) => {
     }
   }
 
-  const addLike = async (event) => {
-    setLikes((previousLikes) => {
-      const updatedLikes = previousLikes + 1
-      const updatedBlog = { ...blog, 'likes': updatedLikes }
-      handleBlogUpdate(blog.id, updatedBlog)
-      console.log(updatedBlog)
-      return updatedLikes
-    })
+  const addLike = async () => {
+    const updatedLikes = currentLikes + 1
+    const updatedBlog = {...blog, 'likes': updatedLikes}
+    handleBlogUpdate(id, updatedBlog)
   }
 
   const handleBlogDeletion = async (id) => {
     try {
-      const returnedData = await blogService.remove(id)
-      setBlogs(blogs.filter((blog) => blog.id !== id))
+      await blogService.remove(id)
+      dispatch(deleteBlog(id))
       dispatch(updateNotification(['The blog was removed', 'success']))
       setTimeout(() => dispatch(deleteNotification()), 5000)
     } catch(exception) {
@@ -60,7 +59,7 @@ const Blog = ({ blog, handleDeletion, userName, id, blogs, setBlogs }) => {
   }
 
   const removeBlog = async () => {
-    if (window.confirm(`Are you sure you want to remove ${blog.title}?`)){
+    if (window.confirm(`Are you sure you want to remove ${blog.title}?`)) {
       await handleBlogDeletion(id)
     }
   }
@@ -73,7 +72,7 @@ const Blog = ({ blog, handleDeletion, userName, id, blogs, setBlogs }) => {
         <div style={hiddenStyle} className='hiddenBlogPart'>
           <p><a href={`${blog.url}`}>{blog.url}</a></p>
           <div id='likes-div'>
-            Likes {likes}
+            Likes {blog.likes}
             <button id='like-button' onClick={addLike}>Like</button>
           </div>
           <button 

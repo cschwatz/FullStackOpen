@@ -6,16 +6,15 @@ const blogSlice = createSlice({
     reducers: {
         createBlog(state, action) {
             //receives blog object as payload
-            console.log(action.payload)
             state.concat(action.payload)
         },
         updateBlog(state, action) {
-            // TODO
-            return state
+            const updatedBlog = action.payload
+            state.map((blog) => blog.id !== updatedBlog.id ? blog : updatedBlog)
         },
         deleteBlog(state, action) {
-            // TODO
-            return state
+            const toRemoveId = action.payload
+            state.filter((blog) => blog.id !== toRemoveId)
         },
         getAllBlogs(state, action) {
             return action.payload
