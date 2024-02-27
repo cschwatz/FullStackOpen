@@ -1,8 +1,12 @@
-const LogoutButton = ({ setUser }) => {
+import { makeLogout } from "../reducers/loginReducer"
+import { useDispatch } from "react-redux"
+
+const LogoutButton = () => {
+  const dispatch = useDispatch()
 
   const handleLogout = () => {
     window.localStorage.clear()
-    setUser(null)
+    dispatch(makeLogout(null))
   }
 
   return(

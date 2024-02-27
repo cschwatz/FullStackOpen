@@ -2,19 +2,23 @@ import loginService from '../services/login'
 import blogService from '../services/blogs'
 import { useDispatch } from 'react-redux'
 import { updateNotification , deleteNotification} from '../reducers/notificationReducer'
+import { makeLogin } from '../reducers/loginReducer'
+import { useState } from 'react'
 
-const LoginForm = ({ username, password, setUsername, setPassword, setUser }) => {
+const LoginForm = () => {
   const dispatch = useDispatch()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
 
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const user = await loginService.login({ username, password })
+      const user = await loginService.login({username, password})
+      dispatch(makeLogin(user))
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
       blogService.setToken(user.token)
-      setUser(user)
       setUsername('')
       setPassword('')
       console.log('Congratulations, you are connected')

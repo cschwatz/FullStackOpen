@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import Togglable from './components/Togglable'
@@ -8,51 +8,48 @@ import { useDispatch, useSelector } from 'react-redux'
 import LoginForm from './components/LoginForm'
 import LogoutButton from './components/LogoutButton'
 import { fetchBlogs } from './reducers/blogsReducer'
+import { makeLogin } from './reducers/loginReducer'
 
 const App = () => {
-  const state = useSelector(state => state.blogs)
-  const bloglist = [...state] // create a copy of state, because we cant mutate directly in redux
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  const blogs = useSelector(state => state.blogs)
+  const bloglist = [...blogs] // create a copy of state, because we cant mutate directly in redux
+  const currentUser = useSelector(state => state.login)
   const dispatch = useDispatch()
-
+  
   useEffect(() => {
     dispatch(fetchBlogs())
-  }, [bloglist])
+    console.log('hellooo')
+
+  }, [])
+  
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
       blogService.setToken(user.token)
+      dispatch(makeLogin(user))
     }
-  }, [])
+  }, [dispatch])
 
-  if (user === null) {
+  if (currentUser === null) {
     return (
       <div>
         <Notification />
-        <LoginForm username={username}
-          password={password}
-          setUsername={setUsername}
-          setPassword={setPassword}
-          setUser={setUser}
-        />
+        <LoginForm />
       </div>
     )
   }
 
   return (
     <div>
-      <p>{user.name} logged in</p>
-      <LogoutButton setUser={setUser} />
+      <p>{currentUser.name} logged in</p>
+      <LogoutButton />
       <Notification />
       <Togglable buttonLabel="new Blog" hideLabel="cancel">
         <h2>Create new Blog</h2>
         <BlogForm
-          user={user}
+          user={currentUser}
         />
       </Togglable>
       <h2>Blogs</h2>
@@ -63,7 +60,7 @@ const App = () => {
             <Blog
               key={blog.id}
               blog={blog}
-              userName={user.name}
+              userName={currentUser.name}
               id={blog.id}
             />
           )}

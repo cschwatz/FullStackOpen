@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { updateNotification, deleteNotification } from '../reducers/notificationReducer'
-import { createNewBlog } from '../reducers/blogsReducer'
+import { createNewBlog, fetchBlogs } from '../reducers/blogsReducer'
 
 const BlogForm = ({ user }) => {
   const dispatch = useDispatch()
@@ -16,6 +16,7 @@ const BlogForm = ({ user }) => {
     }
     try {
       dispatch(createNewBlog(newBlogObject))
+      dispatch(fetchBlogs())
       dispatch(updateNotification([`The blog ${newBlogObject.title} was created by ${user.name}`, 'success']))
       setTimeout(() => dispatch(deleteNotification()), 5000)
     } catch(exception) {

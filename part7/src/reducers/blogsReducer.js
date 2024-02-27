@@ -36,6 +36,8 @@ export const createNewBlog = content => {
     return async dispatch => {
         const newBlog = await blogService.create(content)
         dispatch(createBlog(newBlog))
+        const allBlogs = await blogService.getAll()
+        dispatch(getAllBlogs(allBlogs))
     }
 }
 
@@ -43,6 +45,8 @@ export const updateBlogLikes = (id, blogObject) => {
     return async dispatch => {
         const updatedBlog = await blogService.update(id, blogObject)
         dispatch(updateBlog(updatedBlog))
+        const allBlogs = await blogService.getAll()
+        dispatch(getAllBlogs(allBlogs))
     }
 }
 
@@ -50,6 +54,8 @@ export const removeBlog = (id) => {
     return async dispatch => {
         await blogService.remove(id)
         dispatch(deleteBlog(id))
+        const allBlogs = await blogService.getAll()
+        dispatch(getAllBlogs(allBlogs))
     }
 }
 

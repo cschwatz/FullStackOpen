@@ -1,9 +1,7 @@
 import { useState } from 'react'
-import blogs from '../services/blogs'
-import blogService from '../services/blogs'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateNotification, deleteNotification } from '../reducers/notificationReducer'
-import { removeBlog, updateBlogLikes } from '../reducers/blogsReducer'
+import { fetchBlogs, removeBlog, updateBlogLikes } from '../reducers/blogsReducer'
 
 const Blog = ({ blog, userName, id}) => {
   const [visible, setVisible] = useState(false)
@@ -44,6 +42,7 @@ const Blog = ({ blog, userName, id}) => {
     if (window.confirm(`Are you sure you want to remove ${blog.title}?`)) {
       try {
         dispatch(removeBlog(id))
+        dispatch(fetchBlogs())
         dispatch(updateNotification(['The blog was removed', 'success']))
         setTimeout(() => dispatch(deleteNotification()), 5000)
       } catch(exception) {
