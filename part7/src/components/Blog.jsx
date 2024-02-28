@@ -3,11 +3,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { updateNotification, deleteNotification } from '../reducers/notificationReducer'
 import { fetchBlogs, removeBlog, updateBlogLikes } from '../reducers/blogsReducer'
 
-const Blog = ({ blog, userName, id}) => {
-  const [visible, setVisible] = useState(false)
-  const state = useSelector(state => state.blogs)
-  const currentLikes = state.find((blog) => blog.id === id).likes
+const Blog = ({ blog }) => {
+  const blogId = blog.id
   const dispatch = useDispatch()
+  const state = useSelector(state => state.blogs)
+  const currentUser = useSelector(state => state.login)
+  const currentLikes = state.find((blog) => blog.id === blogId).likes
+  const [visible, setVisible] = useState(false)
 
   const blogStyle = {
     paddingTop: 10,
@@ -28,7 +30,7 @@ const Blog = ({ blog, userName, id}) => {
     const updatedLikes = currentLikes + 1
     const updatedBlog = {...blog, 'likes': updatedLikes}
     try {
-      dispatch(updateBlogLikes(id, updatedBlog))
+      dispatch(updateBlogLikes(blogId, updatedBlog))
       dispatch(updateNotification([`The blog ${updatedBlog.title} was updated`, 'success']))
       setTimeout(() => dispatch(deleteNotification()), 5000)
     } catch(exception) {
@@ -41,7 +43,7 @@ const Blog = ({ blog, userName, id}) => {
   const deleteBlog = async () => {
     if (window.confirm(`Are you sure you want to remove ${blog.title}?`)) {
       try {
-        dispatch(removeBlog(id))
+        dispatch(removeBlog(blogId))
         dispatch(fetchBlogs())
         dispatch(updateNotification(['The blog was removed', 'success']))
         setTimeout(() => dispatch(deleteNotification()), 5000)
@@ -67,7 +69,7 @@ const Blog = ({ blog, userName, id}) => {
           <button 
           id='remove-blog-button'
           onClick={deleteBlog}
-          style={userName === blog.author ? {display: ''} : {display: 'none'}}
+          style={currentUser.name === blog.author ? {display: ''} : {display: 'none'}}
           >
             remove
           </button>
