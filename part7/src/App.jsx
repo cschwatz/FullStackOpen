@@ -13,6 +13,7 @@ import Users from './components/Users'
 import User from './components/User'
 import Blog from './components/Blog'
 import { useMatch } from 'react-router-dom'
+import NavBar from './components/NavBar'
 
 const App = () => {
   const currentUser = useSelector(state => state.login)
@@ -50,7 +51,7 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
-      <p>{currentUser.name} logged in</p>
+      <NavBar username={currentUser.name} />
       <LogoutButton />
       <Notification />
       <Routes>
