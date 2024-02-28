@@ -2,35 +2,20 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateNotification, deleteNotification } from '../reducers/notificationReducer'
 import { fetchBlogs, removeBlog, updateBlogLikes } from '../reducers/blogsReducer'
+import { useParams } from 'react-router-dom'
 
-const Blog = ({ blog }) => {
-  const blogId = blog.id
-  const dispatch = useDispatch()
+const Blog = ({ blog2 }) => {
+  const id = useParams().id
   const state = useSelector(state => state.blogs)
+  const dispatch = useDispatch()
   const currentUser = useSelector(state => state.login)
-  const currentLikes = state.find((blog) => blog.id === blogId).likes
-  const [visible, setVisible] = useState(false)
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
-  const hiddenStyle = {
-    display: visible ? '' : 'none'
-  }
-
-  const toggleVisibility = () => {
-    setVisible(!visible)
-  }
+  const blog = state.find((blog) => blog.id === id)
 
   const addLike = async () => {
-    const updatedLikes = currentLikes + 1
+    const updatedLikes = blog.likes + 1
     const updatedBlog = {...blog, 'likes': updatedLikes}
     try {
-      dispatch(updateBlogLikes(blogId, updatedBlog))
+      dispatch(updateBlogLikes(id, updatedBlog))
       dispatch(updateNotification([`The blog ${updatedBlog.title} was updated`, 'success']))
       setTimeout(() => dispatch(deleteNotification()), 5000)
     } catch(exception) {
@@ -55,17 +40,21 @@ const Blog = ({ blog }) => {
     }
   }
 
+  if (state.length === 0) {
+    return <p>...Loading</p>
+  }
+
   return(
     <div>
-      <div style={blogStyle} className='blog'>
-        {blog.title}
-        <button id='show-hide-button' onClick={toggleVisibility}>{visible ? 'hide' : 'show'}</button>
-        <div style={hiddenStyle} className='hiddenBlogPart'>
+      <div className='blog'>
+        <h2>{blog.title}</h2>
+        <div>
           <p><a href={`${blog.url}`}>{blog.url}</a></p>
           <div id='likes-div'>
-            Likes {blog.likes}
+            {blog.likes} Likes
             <button id='like-button' onClick={addLike}>Like</button>
           </div>
+          <br></br>
           <button 
           id='remove-blog-button'
           onClick={deleteBlog}
@@ -74,7 +63,7 @@ const Blog = ({ blog }) => {
             remove
           </button>
         </div>
-        <p>{blog.author}</p>
+        <p>added by {blog.author}</p>
       </div>
     </div>
   )}

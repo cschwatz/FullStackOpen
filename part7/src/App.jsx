@@ -7,15 +7,22 @@ import LoginForm from './components/LoginForm'
 import LogoutButton from './components/LogoutButton'
 import { fetchBlogs } from './reducers/blogsReducer'
 import { makeLogin } from './reducers/loginReducer'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { getAllUsers } from './reducers/userReducer'
 import Users from './components/Users'
 import User from './components/User'
+import Blog from './components/Blog'
+import { useMatch } from 'react-router-dom'
 
 const App = () => {
   const currentUser = useSelector(state => state.login)
   const dispatch = useDispatch()
+  const blogs = useSelector(state => state.blogs)
   
+  // Blog rendering
+  const match = useMatch('/blogs/:id')
+  const blog = match ? blogs.find(blog => blog.id === Number(match.params.id)) : null
+
   useEffect(() => {
     dispatch(fetchBlogs())
     dispatch(getAllUsers())
@@ -42,11 +49,13 @@ const App = () => {
 
   return (
     <div>
+      <h2>Blogs</h2>
       <p>{currentUser.name} logged in</p>
       <LogoutButton />
       <Notification />
       <Routes>
         <Route path='/' element={<BlogList />} />
+        <Route path='blogs/:id' element={<Blog blog={blog} />}/>
         <Route path='/users' element={<Users />}/>
         <Route path='/users/:id' element={<User />} />
       </Routes>
