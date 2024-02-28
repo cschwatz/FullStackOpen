@@ -1,9 +1,6 @@
-import { useSelector } from "react-redux"
+import { Link } from "react-router-dom"
 
-
-const UserTable = () => {
-    const users = useSelector(state => state.users)
-    const userList = [...users] // create a shallow copy because we cant directly mutate in redux
+const UserTable = ({ userList }) => {
 
     return(
         <div>
@@ -18,7 +15,8 @@ const UserTable = () => {
                     {userList.map(user => (
                     <tr key={user.id}>
                         <td>
-                            {user.name}
+                            <Link to={`/users/${user.id}`}>{user.name}</Link>
+                            
                         </td>
                         <td>
                             {user.blogs.length}

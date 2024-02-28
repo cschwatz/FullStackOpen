@@ -10,6 +10,7 @@ import { makeLogin } from './reducers/loginReducer'
 import { Routes, Route, Link } from 'react-router-dom'
 import { getAllUsers } from './reducers/userReducer'
 import Users from './components/Users'
+import User from './components/User'
 
 const App = () => {
   const currentUser = useSelector(state => state.login)
@@ -47,6 +48,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={<BlogList />} />
         <Route path='/users' element={<Users />}/>
+        <Route path='/users/:id' element={<User />} />
       </Routes>
     </div>
   )
