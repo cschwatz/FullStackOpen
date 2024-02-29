@@ -4,7 +4,7 @@ import { updateNotification, deleteNotification } from '../reducers/notification
 import { fetchBlogs, removeBlog, updateBlogLikes } from '../reducers/blogsReducer'
 import { useParams } from 'react-router-dom'
 
-const Blog = ({ blog2 }) => {
+const Blog = () => {
   const id = useParams().id
   const state = useSelector(state => state.blogs)
   const dispatch = useDispatch()
@@ -64,6 +64,14 @@ const Blog = ({ blog2 }) => {
           </button>
         </div>
         <p>added by {blog.author}</p>
+        <h3>Comments</h3>
+        <ul>
+          {blog.comments.map(comment => (
+            <li key={blog.id}>
+              {comment}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   )}
