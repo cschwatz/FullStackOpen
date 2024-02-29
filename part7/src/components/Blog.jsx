@@ -1,8 +1,8 @@
-import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateNotification, deleteNotification } from '../reducers/notificationReducer'
 import { fetchBlogs, removeBlog, updateBlogLikes } from '../reducers/blogsReducer'
 import { useParams } from 'react-router-dom'
+import CommentForm from './CommentForm'
 
 const Blog = () => {
   const id = useParams().id
@@ -10,6 +10,8 @@ const Blog = () => {
   const dispatch = useDispatch()
   const currentUser = useSelector(state => state.login)
   const blog = state.find((blog) => blog.id === id)
+
+  const generateKey = () => Math.floor(Math.random() * 1000000)
 
   const addLike = async () => {
     const updatedLikes = blog.likes + 1
@@ -65,13 +67,21 @@ const Blog = () => {
         </div>
         <p>added by {blog.author}</p>
         <h3>Comments</h3>
-        <ul>
-          {blog.comments.map(comment => (
-            <li key={blog.id}>
-              {comment}
-            </li>
-          ))}
-        </ul>
+        <CommentForm blogId={blog.id} />
+        {(blog.comments.length ) > 0 ? (
+          <ul>
+            {blog.comments.map(comment => (
+              <li key={generateKey()}>
+                {comment}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>
+            There are no comments for this blog
+          </p>
+        )}
+        
       </div>
     </div>
   )}
