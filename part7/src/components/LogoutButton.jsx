@@ -1,5 +1,6 @@
 import { makeLogout } from "../reducers/loginReducer"
 import { useDispatch } from "react-redux"
+import { Button } from 'react-bootstrap'
 
 const LogoutButton = () => {
   const dispatch = useDispatch()
@@ -11,7 +12,7 @@ const LogoutButton = () => {
 
   return(
     <div>
-      <button id='logout-button' onClick={handleLogout}>Logout</button>
+      <Button variant="primary" onClick={handleLogout}>Logout</Button>
     </div>
   )
 }

@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import { updateNotification , deleteNotification} from '../reducers/notificationReducer'
 import { makeLogin } from '../reducers/loginReducer'
 import { useState } from 'react'
+import { Form, Button } from 'react-bootstrap'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
@@ -34,27 +35,31 @@ const LoginForm = () => {
   }
 
   return(
-    <div>
-      <form onSubmit={handleLogin}>
-        username
-        <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-          id='username'
-        />
-        <br></br>
-        password
-        <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-          id='password'
-        />
-        <button id='login-button' type="submit">Login</button>
-      </form>
+    <div className='container'>
+      <h2>Login</h2>
+      <Form onSubmit={handleLogin}>
+        <Form.Group>
+          <Form.Label>username</Form.Label>
+          <Form.Control 
+            type="text"
+            name="username"
+            placeholder='Enter username'
+            value={username}
+            onChange={({ target }) => setUsername(target.value)}
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>password</Form.Label>
+          <Form.Control 
+            type="password"
+            name="password"
+            placeholder='Enter password'
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+          />
+        </Form.Group>
+        <Button variant="primary" type="submit">Login</Button>
+      </Form>
     </div>
   )
 }

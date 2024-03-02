@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateNotification, deleteNotification } from '../reducers/notificationReducer'
 import { createNewBlog, fetchBlogs } from '../reducers/blogsReducer'
+import { Button } from 'react-bootstrap'
 
 const BlogForm = () => {
   const dispatch = useDispatch()
@@ -48,7 +49,7 @@ const BlogForm = () => {
           placeholder='url of the blog'
           id='blog-url'
         />
-        <button id='create-blog-button' type="submit">Create</button>
+        <Button variant="primary" type="submit">Create</Button>
       </form>
     </div>
   )

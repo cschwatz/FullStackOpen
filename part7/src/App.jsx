@@ -41,7 +41,7 @@ const App = () => {
 
   if (currentUser === null) {
     return (
-      <div>
+      <div className=''>
         <Notification />
         <LoginForm />
       </div>
@@ -49,10 +49,8 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h2>Blogs</h2>
+    <div className='container'>
       <NavBar username={currentUser.name} />
-      <LogoutButton />
       <Notification />
       <Routes>
         <Route path='/' element={<BlogList />} />
