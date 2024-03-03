@@ -8,15 +8,25 @@ const BlogList = () => {
     const blogs = useSelector(state => state.blogs)
     const bloglist = [...blogs] // create a copy of state, because we cant mutate directly in redux
 
+    const tableStyle = {
+        textWrap: 'wrap'
+    }
+
+    const divStyle = {
+        padding: 10,
+        margin: 10
+    }
+
     return(
-        <div className='container'>
+        <div className='container' style={divStyle}>
+            <h2>Blogs</h2>
             <Togglable buttonLabel="new Blog" hideLabel="cancel">
                 <h2>Create new Blog</h2>
                 <BlogForm />
             </Togglable>
-            <h2>Blogs</h2>
+            
             <div className='blogs'>
-                <Table striped hover>
+                <Table striped hover style={tableStyle}>
                     <thead>
                         <tr>
                             <td>Blog title</td>

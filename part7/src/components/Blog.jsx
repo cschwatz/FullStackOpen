@@ -3,6 +3,8 @@ import { updateNotification, deleteNotification } from '../reducers/notification
 import { fetchBlogs, removeBlog, updateBlogLikes } from '../reducers/blogsReducer'
 import { useParams } from 'react-router-dom'
 import CommentForm from './CommentForm'
+import { ListGroup, Button } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 
 const Blog = () => {
   const id = useParams().id
@@ -10,8 +12,27 @@ const Blog = () => {
   const dispatch = useDispatch()
   const currentUser = useSelector(state => state.login)
   const blog = state.find((blog) => blog.id === id)
+  const navigate = useNavigate()
 
   const generateKey = () => Math.floor(Math.random() * 1000000)
+
+  const commentListStyle = {
+    display: 'flex'
+  }
+
+  const commentStyle = {
+    width: 375,
+    textWrap: 'wrap'
+  }
+  const likesStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 5
+  }
+
+  const divStyle = {
+    padding: 15
+  }
 
   const addLike = async () => {
     const updatedLikes = blog.likes + 1
@@ -30,10 +51,11 @@ const Blog = () => {
   const deleteBlog = async () => {
     if (window.confirm(`Are you sure you want to remove ${blog.title}?`)) {
       try {
-        dispatch(removeBlog(blogId))
+        dispatch(removeBlog(blog.id))
         dispatch(fetchBlogs())
         dispatch(updateNotification(['The blog was removed', 'success']))
         setTimeout(() => dispatch(deleteNotification()), 5000)
+        navigate('/')
       } catch(exception) {
         console.log(exception)
         dispatch(updateNotification(['Whoops, something went wrong', 'unsuccess']))
@@ -48,34 +70,35 @@ const Blog = () => {
 
   return(
     <div>
-      <div className='blog'>
+      <div className='blog' style={divStyle}>
         <h2>{blog.title}</h2>
         <div>
           <p><a href={`${blog.url}`}>{blog.url}</a></p>
-          <div id='likes-div'>
+          <div id='likes-div' style={likesStyle}>
             {blog.likes} Likes
-            <button id='like-button' onClick={addLike}>Like</button>
+            <Button variant='primary' onClick={addLike}>Like</Button>
           </div>
           <br></br>
-          <button 
-          id='remove-blog-button'
+          <Button
+          variant='primary'
           onClick={deleteBlog}
           style={currentUser.name === blog.author ? {display: ''} : {display: 'none'}}
           >
-            remove
-          </button>
+            Remove
+          </Button>
         </div>
-        <p>added by {blog.author}</p>
+        <br></br>
+        <p><span><b>added by {blog.author}</b></span></p>
         <h3>Comments</h3>
-        <CommentForm blogId={blog.id} />
+        <CommentForm blogId={blog.id} style={commentListStyle} />
         {(blog.comments.length ) > 0 ? (
-          <ul>
+          <ListGroup>
             {blog.comments.map(comment => (
-              <li key={generateKey()}>
+              <ListGroup.Item key={generateKey()} style={commentStyle}>
                 {comment}
-              </li>
+              </ListGroup.Item>
             ))}
-          </ul>
+          </ListGroup>
         ) : (
           <p>
             There are no comments for this blog

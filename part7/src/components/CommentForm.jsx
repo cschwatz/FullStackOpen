@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react"
-import { fetchBlogs } from "../reducers/blogsReducer"
+import { useState } from "react"
 import { updateNotification, deleteNotification } from "../reducers/notificationReducer"
 import { useDispatch } from "react-redux"
 import { createComment } from "../reducers/blogsReducer"
+import { Button } from "react-bootstrap"
 
 const CommentForm = ({ blogId }) => {
     const dispatch = useDispatch()
     const [comment, setComment] = useState('')
+    const commentStyle = {
+        display: 'flex',
+        gap: 5,
+        padding: 5
+    }
 
     const makeComment = (event) => {
         event.preventDefault()
@@ -24,16 +29,16 @@ const CommentForm = ({ blogId }) => {
     }
 
     return(
-        <div>
-            <form onSubmit={makeComment}>
+        <div  onSubmit={makeComment}>
+            <form style={commentStyle}>
                 <input 
                     type="text"
                     value={comment}
                     onChange={({ target }) => setComment(target.value)}
                 />
-                <button type='submit'>
+                <Button variant='primary' type='submit'>
                     make comment
-                </button>
+                </Button>
             </form>
         </div>
     )

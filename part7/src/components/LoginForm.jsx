@@ -11,6 +11,17 @@ const LoginForm = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
+  const formStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    gap: 5
+  }
+
+  const buttonStyle = {
+    width: 150
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
@@ -37,7 +48,7 @@ const LoginForm = () => {
   return(
     <div className='container'>
       <h2>Login</h2>
-      <Form onSubmit={handleLogin}>
+      <Form onSubmit={handleLogin} style={formStyle}>
         <Form.Group>
           <Form.Label>username</Form.Label>
           <Form.Control 
@@ -58,7 +69,7 @@ const LoginForm = () => {
             onChange={({ target }) => setPassword(target.value)}
           />
         </Form.Group>
-        <Button variant="primary" type="submit">Login</Button>
+        <Button variant="primary" type="submit" style={buttonStyle}>Login</Button>
       </Form>
     </div>
   )

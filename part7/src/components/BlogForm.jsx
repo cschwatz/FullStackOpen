@@ -10,6 +10,12 @@ const BlogForm = () => {
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
 
+  const formStyle = {
+    display: 'flex',
+    gap: 5,
+    alignItems: 'center'
+  }
+
   const handleBlogCreation = (event) => {
     event.preventDefault()
     const newBlogObject = {
@@ -31,8 +37,8 @@ const BlogForm = () => {
   }
 
   return(
-    <div>
-      <form onSubmit={handleBlogCreation}>
+    <div className='container'>
+      <form onSubmit={handleBlogCreation} style={formStyle}>
           title
         <input
           type="text"
