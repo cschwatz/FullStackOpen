@@ -13,7 +13,6 @@ blogsRouter.post('/', async (request, response) => {
   if (!request.token) {
     return response.status(401).json({error: "You are not authenticated"})
   }
-  
   const user = await User.findById(request.user)
 
   const blog = new Blog({
@@ -21,10 +20,12 @@ blogsRouter.post('/', async (request, response) => {
     author: user.name,
     url: body.url,
     likes: body.likes,
-    user: user.id
+    user: user.id,
+    content: body.content,
+    comments: []
   })
 
-  if (!blog.title || !blog.url) {
+  if (!blog.title || !blog.url || !blog.content) {
     response.status(400).end()
   } else {
     if (!blog.likes) {
@@ -37,13 +38,21 @@ blogsRouter.post('/', async (request, response) => {
   }
 })
 
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const blogId = request.params.id //fetch the id from the URI
+  const comment = request.body.comment
+  const blog = await Blog.findById(blogId)
+  blog.comments.push(comment)
+  const savedBlog = await blog.save()
+  response.status(201).json(savedBlog)
+})
+
 blogsRouter.delete('/:id', async (request, response) => {
   if (!request.token) {
     return response.status(401).json({error: "You are not authenticated"})
   }
 
   const toDelete = await Blog.findById(request.params.id)
-  const currentUser = request.user
   if (!toDelete) {
     response.status(400).end()
   } else if (toDelete.user.toString() !== request.user) {

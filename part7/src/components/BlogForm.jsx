@@ -9,6 +9,7 @@ const BlogForm = () => {
   const user = useSelector(state => state.login)
   const [title, setTitle] = useState('')
   const [url, setUrl] = useState('')
+  const [content, setContent] = useState('')
 
   const formStyle = {
     display: 'flex',
@@ -20,7 +21,8 @@ const BlogForm = () => {
     event.preventDefault()
     const newBlogObject = {
       title: title,
-      url: url
+      url: url,
+      content: content
     }
     try {
       dispatch(createNewBlog(newBlogObject))
@@ -54,6 +56,11 @@ const BlogForm = () => {
           onChange={({ target }) => setUrl(target.value)}
           placeholder='url of the blog'
           id='blog-url'
+        />
+        <textarea 
+          value={content}
+          onChange={({target}) => setContent(target.value)}
+          placeholder='Type your post here!'
         />
         <Button variant="primary" type="submit">Create</Button>
       </form>

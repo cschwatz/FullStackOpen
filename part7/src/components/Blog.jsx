@@ -5,14 +5,18 @@ import { useParams } from 'react-router-dom'
 import CommentForm from './CommentForm'
 import { ListGroup, Button } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
+import showdown from 'showdown'
+import ReactHtmlParser from 'react-html-parser'
 
 const Blog = () => {
+  const converter = new showdown.Converter()
   const id = useParams().id
   const state = useSelector(state => state.blogs)
   const dispatch = useDispatch()
   const currentUser = useSelector(state => state.login)
   const blog = state.find((blog) => blog.id === id)
   const navigate = useNavigate()
+  const htmlContent = converter.makeHtml(blog.content)
 
   const generateKey = () => Math.floor(Math.random() * 1000000)
 
@@ -77,6 +81,9 @@ const Blog = () => {
           <div id='likes-div' style={likesStyle}>
             {blog.likes} Likes
             <Button variant='primary' onClick={addLike}>Like</Button>
+          </div>
+          <div>
+            {ReactHtmlParser(htmlContent)}
           </div>
           <br></br>
           <Button
