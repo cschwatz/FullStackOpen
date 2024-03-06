@@ -30,11 +30,6 @@ const blogSlice = createSlice({
 
 export const { createBlog, updateBlog, deleteBlog, getAllBlogs, makeNewComment } = blogSlice.actions
 
-const refresh = async () => {
-    const allBlogs = await blogService.getAll()
-    dispatch(getAllBlogs(allBlogs))
-}
-
 export const fetchBlogs = () => {
     return async dispatch => {
         const blogs = await blogService.getAll()

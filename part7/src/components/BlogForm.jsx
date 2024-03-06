@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { updateNotification, deleteNotification } from '../reducers/notificationReducer'
-import { createNewBlog, fetchBlogs } from '../reducers/blogsReducer'
+import { createNewBlog } from '../reducers/blogsReducer'
 import { Button } from 'react-bootstrap'
 
 const BlogForm = () => {
@@ -26,7 +26,6 @@ const BlogForm = () => {
     }
     try {
       dispatch(createNewBlog(newBlogObject))
-      dispatch(fetchBlogs())
       dispatch(updateNotification([`The blog ${newBlogObject.title} was created by ${user.name}`, 'success']))
       setTimeout(() => dispatch(deleteNotification()), 5000)
     } catch(exception) {
@@ -36,6 +35,7 @@ const BlogForm = () => {
     }
     setTitle('')
     setUrl('')
+    setContent('')
   }
 
   return(
