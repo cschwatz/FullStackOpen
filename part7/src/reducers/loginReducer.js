@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
+import loginService from '../services/login'
 
 const loginSlice = createSlice({
   name: "login",
@@ -14,5 +15,12 @@ const loginSlice = createSlice({
 })
 
 export const { makeLogin, makeLogout } = loginSlice.actions
+
+export const attemptLogin = (user) => {
+  return async dispatch => {
+    const loggedUser = await loginService.login(user)
+    dispatch(makeLogin(loggedUser))
+  }
+}
 
 export default loginSlice.reducer

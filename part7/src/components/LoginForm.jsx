@@ -1,15 +1,24 @@
-import loginService from '../services/login'
 import blogService from '../services/blogs'
 import { useDispatch } from 'react-redux'
 import { updateNotification , deleteNotification} from '../reducers/notificationReducer'
-import { makeLogin } from '../reducers/loginReducer'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Form, Button } from 'react-bootstrap'
+import { attemptLogin } from '../reducers/loginReducer'
+import CreateUserForm from './CreateUserForm' 
+import { useSelector } from 'react-redux'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
+  const users = useSelector(state => state.users)
+  const [isCreatingUser, setIsCreatingUser] = useState(false)
+  const [userWasCreated, setUserWasCreated] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+
+  useEffect(() => {
+    console.log(users)
+    setUserWasCreated(false)
+  }, [])
 
   const formStyle = {
     display: 'flex',
@@ -22,11 +31,20 @@ const LoginForm = () => {
     width: 150
   }
 
+  const handleRegistrationForm = () => {
+    setIsCreatingUser(true)
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
+    const userObject = {
+      username: username,
+      password: password
+    }
     try {
-      const user = await loginService.login({username, password})
-      dispatch(makeLogin(user))
+      dispatch(attemptLogin(userObject))
+      const user = users.filter(user => user.username === userObject.username)
+      console.log(user)
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
@@ -43,6 +61,12 @@ const LoginForm = () => {
       setUsername('')
       setPassword('')
     }
+  }
+
+  if (isCreatingUser) {
+    return(
+      <CreateUserForm setUserWasCreated={setUserWasCreated} setIsCreatingUser={setIsCreatingUser} />
+    )
   }
 
   return(
@@ -71,6 +95,7 @@ const LoginForm = () => {
         </Form.Group>
         <Button variant="primary" type="submit" style={buttonStyle}>Login</Button>
       </Form>
+      <Button variant="secondary" onClick={handleRegistrationForm} style={buttonStyle}>Register</Button>
     </div>
   )
 }
