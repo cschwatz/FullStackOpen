@@ -6,7 +6,8 @@ const loginSlice = createSlice({
   initialState: null,
   reducers: {
     makeLogin(state, action) {
-        return action.payload
+        state = action.payload
+        return state
     },
     makeLogout(state, action) {
         return null
@@ -20,6 +21,7 @@ export const attemptLogin = (user) => {
   return async dispatch => {
     const loggedUser = await loginService.login(user)
     dispatch(makeLogin(loggedUser))
+    return loggedUser
   }
 }
 

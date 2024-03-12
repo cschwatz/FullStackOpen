@@ -5,11 +5,12 @@ import { Form, Button } from 'react-bootstrap'
 import { createNewUser } from '../reducers/userReducer'
 import { useNavigate } from 'react-router-dom'
 
-const CreateUserForm = ({ setUserWasCreated, setIsCreatingUser }) => {
+const CreateUserForm = () => {
   const dispatch = useDispatch()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
+  const navigate = useNavigate()
 
   const formStyle = {
     display: 'flex',
@@ -24,7 +25,6 @@ const CreateUserForm = ({ setUserWasCreated, setIsCreatingUser }) => {
 
   const handleUserCreation = async (event) => {
     event.preventDefault()
-    setUserWasCreated(true)
     const newUserObject = {
         username: username,
         password: password,
@@ -34,7 +34,7 @@ const CreateUserForm = ({ setUserWasCreated, setIsCreatingUser }) => {
         dispatch(createNewUser(newUserObject))
         dispatch(updateNotification([`The user ${newUserObject.username} was created!`, 'success']));
         setTimeout(() => dispatch(deleteNotification()), 5000)
-        setIsCreatingUser(false)
+        navigate("/")
     } catch (exception) {
         console.log('something went wrong')
         dispatch(updateNotification([`Something went wrong!`, 'unsuccess']));
@@ -77,7 +77,7 @@ const CreateUserForm = ({ setUserWasCreated, setIsCreatingUser }) => {
           />
         </Form.Group>
         <Button variant="primary" type="submit" style={buttonStyle}>Create User</Button>
-        <Button variant="secondary" onClick={() => setIsCreatingUser(false)} style={buttonStyle}>Return</Button>
+        <Button variant="secondary" onClick={() => navigate("/login")} style={buttonStyle}>Return</Button>
       </Form>
     </div>
   )

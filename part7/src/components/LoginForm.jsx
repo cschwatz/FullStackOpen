@@ -1,24 +1,16 @@
 import blogService from '../services/blogs'
 import { useDispatch } from 'react-redux'
 import { updateNotification , deleteNotification} from '../reducers/notificationReducer'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Form, Button } from 'react-bootstrap'
 import { attemptLogin } from '../reducers/loginReducer'
-import CreateUserForm from './CreateUserForm' 
-import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
-  const users = useSelector(state => state.users)
-  const [isCreatingUser, setIsCreatingUser] = useState(false)
-  const [userWasCreated, setUserWasCreated] = useState(false)
+  const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-
-  useEffect(() => {
-    console.log(users)
-    setUserWasCreated(false)
-  }, [])
 
   const formStyle = {
     display: 'flex',
@@ -32,7 +24,7 @@ const LoginForm = () => {
   }
 
   const handleRegistrationForm = () => {
-    setIsCreatingUser(true)
+    navigate('/register')
   }
 
   const handleLogin = async (event) => {
@@ -42,9 +34,7 @@ const LoginForm = () => {
       password: password
     }
     try {
-      dispatch(attemptLogin(userObject))
-      const user = users.filter(user => user.username === userObject.username)
-      console.log(user)
+      const user = await dispatch(attemptLogin(userObject)) // using await because the dispatch handles a promise
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
       )
@@ -61,12 +51,6 @@ const LoginForm = () => {
       setUsername('')
       setPassword('')
     }
-  }
-
-  if (isCreatingUser) {
-    return(
-      <CreateUserForm setUserWasCreated={setUserWasCreated} setIsCreatingUser={setIsCreatingUser} />
-    )
   }
 
   return(

@@ -13,9 +13,11 @@ import User from './components/User'
 import Blog from './components/Blog'
 import { useMatch } from 'react-router-dom'
 import NavBar from './components/NavBar'
+import { Navigate } from 'react-router-dom'
+import CreateUserForm from './components/CreateUserForm'
 
 const App = () => {
-  const currentUser = useSelector(state => state.login)
+  const currentUser = useSelector((state) => state.login)
   const dispatch = useDispatch()
   const blogs = useSelector(state => state.blogs)
   
@@ -26,7 +28,7 @@ const App = () => {
   useEffect(() => {
     dispatch(fetchBlogs())
     dispatch(getAllUsers())
-  }, [])
+  }, [dispatch])
   
 
   useEffect(() => {
@@ -36,24 +38,20 @@ const App = () => {
       blogService.setToken(user.token)
       dispatch(makeLogin(user))
     }
+    console.log(currentUser)
   }, [dispatch])
-
-  if (currentUser === null) {
-    return (
-      <div className=''>
-        <Notification />
-        <LoginForm />
-      </div>
-    )
-  }
 
   return (
     <div className='container'>
-      <NavBar username={currentUser.name} />
+      {(currentUser !== null) ? 
+      (<NavBar username={currentUser.name} />) 
+      : (null)}
       <Notification />
       <Routes>
-        <Route path='/' element={<BlogList />} />
+        <Route path='/' element={currentUser ? <BlogList /> : <Navigate replace to="/login"/>} />
         <Route path='blogs/:id' element={<Blog blog={blog} />}/>
+        <Route path='/login' element={!currentUser ? <LoginForm /> : <Navigate replace to="/"/>} />
+        <Route path='/register' element={<CreateUserForm />} />
         <Route path='/users' element={<Users />}/>
         <Route path='/users/:id' element={<User />} />
       </Routes>
