@@ -3,6 +3,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const helper = require('../utils/list_helper')
 const Blog = require('../models/blogs')
+const User = require('../models/users')
 
 const api = supertest(app)
 
@@ -155,6 +156,26 @@ describe('DELETE request tests', () => {
 
     const newBlogs = await helper.blogsInDB()
     expect(newBlogs).toHaveLength(currentBlogsLen - 1)
+  })
+
+  test('Deleting a blog deletes it from the user`s array of blogs', async () => {
+    const currentBlogs = await api.get('/api/blogs')
+    const currentBlogsLen = currentBlogs.body.length
+    const blogToDelete = currentBlogs.body[0]
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QzIiwiaWQiOiI2NWYwYjkyZDIyYzVmNjhiNzYwNTBmYTEiLCJpYXQiOjE3MTA0NDE2MTJ9.4uGc-Ps7Rwgyq9N2ka_47cIbLLMG52t1WfcRydAfzk8'
+    const IdOwnerOfDeletedBlog = blogToDelete.user.id
+    const OwnerOfDeletedBlog = await User.findById(IdOwnerOfDeletedBlog)
+    const currentUserBlogs = OwnerOfDeletedBlog.blogs
+    const currentUserBlogsLen = currentUserBlogs.length
+    const newUserBlogs = currentUserBlogs.filter((blog) => blog.toString() !== blogToDelete.id)
+    expect(newUserBlogs).toHaveLength(currentUserBlogsLen - 1)
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `bearer ${token}`)
+      .expect(204)
+    const newBlogs = await helper.blogsInDB()
+    expect(newBlogs).toHaveLength(currentBlogsLen - 1)
+
   })
 })
 

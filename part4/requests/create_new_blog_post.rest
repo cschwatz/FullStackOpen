@@ -1,6 +1,6 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjY1YmZhYmUzZmI3NmYxYzY3N2U3ZDA0MiIsImlhdCI6MTcwOTY2Njk0NH0.8oGNdEOQEKUOI4OHQ6qMM0EkwAMsishjmILVNbBuph4
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjY1ZjM0ZmZjZjM0YWU4YjI3NDVmZjQ0YiIsImlhdCI6MTcxMDQ0NDU2Mn0.CA-4GxuSTJkpzYDuyVLr8M6UW5nsJuPjC40rHG-o7lQ
 
 {
     "title": "blogCCC",

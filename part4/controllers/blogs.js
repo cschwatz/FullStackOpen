@@ -1,7 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blogs')
 const User = require('../models/users')
-const jwt = require('jsonwebtoken')
 
 blogsRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({}).populate('user', {id: 1, username: 1, name: 1})
@@ -14,7 +13,6 @@ blogsRouter.post('/', async (request, response) => {
     return response.status(401).json({error: "You are not authenticated"})
   }
   const user = await User.findById(request.user)
-
   const blog = new Blog({
     title: body.title,
     author: user.name,
@@ -51,14 +49,17 @@ blogsRouter.delete('/:id', async (request, response) => {
   if (!request.token) {
     return response.status(401).json({error: "You are not authenticated"})
   }
-
   const toDelete = await Blog.findById(request.params.id)
   if (!toDelete) {
     response.status(400).end()
   } else if (toDelete.user.toString() !== request.user) {
     response.status(401).json({error: "You are not the owner of this Blog"})
   } else {
-    await Blog.findByIdAndDelete(request.params.id)
+    await Blog.findByIdAndDelete(request.params.id) // deletes the blog post
+    // deleting blog from the blogs array in the users`s object
+    const ownerOfBlog = await User.findById(toDelete.user.toString())
+    ownerOfBlog.blogs = ownerOfBlog.blogs.filter((blog) => blog.toString() !== toDelete.id.toString())
+    ownerOfBlog.save()
     response.status(204).end()
   }
 })
