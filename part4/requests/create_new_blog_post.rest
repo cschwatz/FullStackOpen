@@ -1,10 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjY1ZjM0ZmZjZjM0YWU4YjI3NDVmZjQ0YiIsImlhdCI6MTcxMDQ0NDU2Mn0.CA-4GxuSTJkpzYDuyVLr8M6UW5nsJuPjC40rHG-o7lQ
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjY1ZjM0ZmZjZjM0YWU4YjI3NDVmZjQ0YiIsImlhdCI6MTcxMDUzMDIwOH0.QIv6HC8P6M8bmILnSQeKkGnNFjNGqQkFYzQNLNE4Nrc
 
 {
-    "title": "blogCCC",
-    "url": "url.com/CCC",
+    "title": "blogTest",
+    "url": "url.com/test",
     "likes": 3,
-    "content": "#This is the content"
+    "content": "Test2 is the author of this blog"
 }

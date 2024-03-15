@@ -20,7 +20,8 @@ blogsRouter.post('/', async (request, response) => {
     likes: body.likes,
     user: user.id,
     content: body.content,
-    comments: []
+    comments: [],
+    userLikes: []
   })
 
   if (!blog.title || !blog.url || !blog.content) {
@@ -66,17 +67,27 @@ blogsRouter.delete('/:id', async (request, response) => {
 
 blogsRouter.put('/:id', async (request, response) => {
   const toUpdate = await Blog.findById(request.params.id)
+  console.log(toUpdate)
+  const userWhoLiked = await User.findById(request.user)
+  const username = userWhoLiked.username
+  console.log(userWhoLiked)
   if (toUpdate.length === 0) {
     return response.status(400).end()
   } else {
     const body = request.body
+    console.log(body)
     const blog = {
-      title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: body.likes
+      title: toUpdate.title,
+      author: toUpdate.author,
+      url: toUpdate.url,
+      likes: body.likes,
+      content: toUpdate.content,
+      comments: toUpdate.comments,
+      userLikes: toUpdate.userLikes
     }
+    blog.userLikes.push(username)
     const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {new: true})
+    console.log(updatedBlog)
     response.json(updatedBlog)
   }
 })
